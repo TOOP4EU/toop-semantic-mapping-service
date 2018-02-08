@@ -1,0 +1,31 @@
+version: '2'
+services:
+  fuseki:
+    build:
+      context: ./fuseki/
+
+      args:
+        #set trace enabled to 'true' to enable Fuseki TRACE logging, emtpy "" if default logging.
+        TRACE_ENABLED: ""
+        #set inference enabled to 'true' to enable Pizza Inference, empty "" for no inference. Notice that enabling reasoning might slow down SPARQL queries considerably.
+        INFERENCE_ENABLED: "true"
+        #disable this if you are running it on a local laptop. For (most/some) TNO servers it should be enabled. 
+        no_proxy:
+#        http_proxy: http://proxy.tno.nl:8080
+    ports:
+      - "3030:3030"
+    mem_limit: 4000m
+    environment:
+      ADMIN_PASSWORD: admin
+      JVM_ARGS: -Xmx3500M
+  grlc:
+    build: ./grlc/
+#    image: clariah/grlc:latest
+    restart: unless-stopped
+    ports:
+     - "8001:80"
+    environment:
+     - DEBUG=true
+     - USERMAP_GID=1000
+     - USERMAP_UID=1000
+     - GRLC_GITHUB_ACCESS_TOKEN=07f1640045d3cfaac1f2b54cec530d37ab246c39
