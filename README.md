@@ -1,4 +1,4 @@
-# semantic-mapping
+# Semantic Mapping Service
 
 The TOOP Semantic Mapping Service is a specific instantiation of the TNO Plasido platform for ontology-based integration of linked data sources.
 
