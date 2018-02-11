@@ -28,4 +28,4 @@ services:
      - DEBUG=true
      - USERMAP_GID=1000
      - USERMAP_UID=1000
-     - GRLC_GITHUB_ACCESS_TOKEN=07f1640045d3cfaac1f2b54cec530d37ab246c39
+     - GRLC_GITHUB_ACCESS_TOKEN= ${env_github_access_token}

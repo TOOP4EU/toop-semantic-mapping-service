@@ -12,7 +12,10 @@ Execute the following steps:
 - Make sure you have Docker, Docker Compose and Git installed.
 - Git clone this Semantic Mapping Serivce repository to your computer.
 - Open a shell and navigate to your `git clone` of the SMS.
-- execute the following command: `docker-compose up -d fuseki grlc`
+- Make a .env file in the root directory of this local SMS repository and add a Github API access token to it
+	this looks like: env_github_access_token= followed by a hexadecimal Github API token that has to be generated at Github.
+
+- Execute the following command: `docker-compose build fuseki grlc' and then 'docker-compose up -d fuseki grlc`
 - All SMS services will be started automatically, this might take a while (also when the command is already finished, it might still take a while for all the services to be started).
 - Now you can access different services of SMS. In the browser open:
 
