@@ -1,0 +1,7 @@
+/.project
+/.pydevproject
+/.settings/
+.env
+.DS_Store
+fuseki/.DS_Store
+grlc/.project
