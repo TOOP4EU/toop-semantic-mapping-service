@@ -31,6 +31,6 @@ ADD jgrapht-core-1.0.1.jar /opt/
 ADD jgraphx-2.0.0.1.jar /opt/
 
 ADD data.ttl /opt/
-ADD ro-total.ttl /opt/registered-organization.ttl
+ADD ro-total-export.ttl /opt/registered-organization.ttl
 
 CMD "/bin/sh" "-c" "sh /opt/startup.sh"
