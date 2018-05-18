@@ -1,0 +1,83 @@
+@prefix tno: <http://tno.nl/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> . 
+@prefix pizza: <http://192.168.99.100/pizza/> .
+
+@prefix kcb: <http://minion02.sensorlab.tno.nl/ontologies/bigtu-kcb#> .
+@prefix kcb-triples: <http://minion02.sensorlab.tno.nl/ontologies/bigtu-kcb_triples#> .
+@prefix chm: <http://minion02.sensorlab.tno.nl/ontologies/bigtu-chm#> .
+@prefix comtrade: <http://bigtu-comtrade#> .
+
+#[testPrice: (?a pizza:pizzaPrice ?c) <- pizzaPrice(?a ?c) print("backward pizza price rule call") (?a rdf:type pizza:Pizza) ]
+#[test: (?a rdf:type pizza:Pizza) print("forward pizza price rule call") pizzaPrice(?a ?c) -> (?a pizza:pizzaPrice ?c) ]
+
+#[testPopular: (?a pizza:pizzaPopular ?c) <- pizzaPopular(?a ?c) print("backward pizza popular rule call") (?a rdf:type pizza:Pizza) ]
+#[test: (?a rdf:type pizza:Pizza) print("forward pizza popular rule call") pizzaPopular(?a ?c) -> (?a pizza:pizzaPopular ?c) ]
+
+#[comtradeExport:
+#(?exportingcountry rdf:type comtrade:Country) 
+#(?exportingcountry comtrade:hasCountryEnglishName ?exportingcountryvalue)
+#(?importingcountry rdf:type comtrade:Country) 
+#(?importingcountry comtrade:hasCountryEnglishName ?importingcountryvalue)
+#notEqual(?exportingcountry,?importingcountry)
+#(?product rdf:type comtrade:Apple)
+#(?product comtrade:hasComtradeCode ?productvalue)
+#(?year rdf:type comtrade:Year)
+#(?year comtrade:hasYear ?yearvalue)
+#uriConcat(comtrade,'#',"Export_",?exportingcountryvalue,'_',?importingcountryvalue,'_',?productvalue,'_',?yearvalue,?uri)
+#->
+#chmExport(?exportingcountryvalue, ?importingcountryvalue, ?productvalue, ?yearvalue, ?export)
+#(?uri rdf:type comtrade:Export) (?uri comtrade:hasExportTradeValue ?export) (?uri comtrade:hasReportingArea ?exportingcountry)
+#]
+
+# because Apache Jena Rule Reasoner does not support backward chaining with more than one head, we split the single rule into 3 rules below.
+
+[comtradeExport1:
+(?uri rdf:type comtrade:Export)
+<-
+print("backward chm rule 1 call export: " ?exportingcountryvalue " import: " ?importingcountryvalue)
+(?exportingcountry rdf:type comtrade:Country) 
+(?exportingcountry comtrade:hasCountryEnglishName ?exportingcountryvalue)
+(?importingcountry rdf:type comtrade:Country) 
+(?importingcountry comtrade:hasCountryEnglishName ?importingcountryvalue)
+notEqual(?exportingcountry,?importingcountry)
+(?product rdf:type comtrade:Apple)
+(?product comtrade:hasComtradeCode ?productvalue)
+(?year rdf:type comtrade:Year)
+(?year comtrade:hasYear ?yearvalue)
+uriConcat(comtrade, "#", ?exportingcountryvalue, ?importingcountryvalue, ?productvalue, ?yearvalue, ?uri)
+]
+
+[comtradeExport2:
+(?uri comtrade:hasExportTradeValue ?export)
+<-
+print("backward chm rule 2 call export: " ?exportingcountryvalue " import: " ?importingcountryvalue)
+(?exportingcountry rdf:type comtrade:Country) 
+(?exportingcountry comtrade:hasCountryEnglishName ?exportingcountryvalue)
+(?importingcountry rdf:type comtrade:Country) 
+(?importingcountry comtrade:hasCountryEnglishName ?importingcountryvalue)
+notEqual(?exportingcountry,?importingcountry)
+(?product rdf:type comtrade:Apple)
+(?product comtrade:hasComtradeCode ?productvalue)
+(?year rdf:type comtrade:Year)
+(?year comtrade:hasYear ?yearvalue)
+uriConcat(comtrade, "#", ?exportingcountryvalue, ?importingcountryvalue, ?productvalue, ?yearvalue, ?uri)
+chmExport(?exportingcountryvalue, ?importingcountryvalue, ?productvalue, ?yearvalue, ?export)
+]
+
+[comtradeExport3:
+(?uri comtrade:hasReportingArea ?exportingcountry)
+<-
+print("backward chm rule 3 call export: " ?exportingcountryvalue " import: " ?importingcountryvalue)
+(?exportingcountry rdf:type comtrade:Country) 
+(?exportingcountry comtrade:hasCountryEnglishName ?exportingcountryvalue)
+(?importingcountry rdf:type comtrade:Country) 
+(?importingcountry comtrade:hasCountryEnglishName ?importingcountryvalue)
+notEqual(?exportingcountry,?importingcountry)
+(?product rdf:type comtrade:Apple)
+(?product comtrade:hasComtradeCode ?productvalue)
+(?year rdf:type comtrade:Year)
+(?year comtrade:hasYear ?yearvalue)
+uriConcat(comtrade, "#",?exportingcountryvalue,?importingcountryvalue,?productvalue,?yearvalue,?uri)
+chmExport(?exportingcountryvalue, ?importingcountryvalue, ?productvalue, ?yearvalue, ?export)
+]

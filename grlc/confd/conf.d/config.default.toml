@@ -1,0 +1,7 @@
+[template]
+src = "config.default.ini.tmpl"
+dest = "/home/grlc/grlc/config.default.ini"
+keys = [
+  "/fuseki/port",
+  "/grlc/port",
+]

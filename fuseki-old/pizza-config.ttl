@@ -1,0 +1,55 @@
+# Licensed under the terms of http://www.apache.org/licenses/LICENSE-2.0
+
+@prefix : <#> .
+@prefix fuseki: <http://jena.apache.org/fuseki#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix tdb: <http://jena.hpl.hp.com/2008/tdb#> .
+@prefix ja: <http://jena.hpl.hp.com/2005/11/Assembler#> .
+
+[] rdf:type fuseki:Server ;
+	fuseki:services (
+	<#service1>
+	) .
+
+# Custom code.
+[] ja:loadClass "com.hp.hpl.jena.tdb.TDB" .
+
+# TDB
+tdb:DatasetTDB rdfs:subClassOf ja:RDFDataset .
+tdb:GraphTDB rdfs:subClassOf ja:Model .
+
+## ---------------------------------------------------------------
+## Service with only SPARQL query on an inference model.
+## Inference model bbase data in TDB.
+
+<#service1> rdf:type fuseki:Service ;
+	fuseki:name "pizza" ; # http://host/pizza
+	fuseki:serviceQuery "query" ; # SPARQL query service
+	fuseki:serviceUpdate "update" ;
+	fuseki:serviceUpload "upload" ; # Non-SPARQL upload service
+	fuseki:serviceReadWriteGraphStore "data" ; # SPARQL Graph store protocol (read and write)
+	# A separate read-only graph store endpoint:
+	fuseki:serviceReadGraphStore "get" ; # SPARQL Graph store protocol (read only)
+	fuseki:dataset <#dataset> .
+
+<#dataset> rdf:type ja:RDFDataset ;
+	ja:defaultGraph <#model_inf> .
+
+<#model_inf> a ja:InfModel ;
+	ja:baseModel <#tdbGraph> ;
+	ja:content <#test-inf> ;
+#	ja:reasoner [
+#		ja:reasonerURL <http://jena.hpl.hp.com/2003/OWLFBRuleReasoner>
+#	] 
+	.
+	
+<#tdbGraph> rdf:type tdb:GraphTDB ;
+	tdb:dataset <#tdbDataset> .
+
+<#tdbDataset> rdf:type tdb:DatasetTDB ;
+	tdb:location "DB" ;
+	#set the timeout for a SPARQL query in milliseconds. 0 means no timeout and the query never times out.
+	ja:context [ ja:cxtName "arq:queryTimeout" ;  ja:cxtValue "0" ] .
+
+<#test-inf> ja:externalContent <file:///opt/ontology-plus-data.ttl> .

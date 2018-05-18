@@ -1,6 +1,7 @@
 version: '2'
 services:
   fuseki:
+    image: ci.tno.nl/toop/plasido/fuseki:latest
     build:
       context: ./fuseki/
 
@@ -8,24 +9,52 @@ services:
         #set trace enabled to 'true' to enable Fuseki TRACE logging, emtpy "" if default logging.
         TRACE_ENABLED: ""
         #set inference enabled to 'true' to enable Pizza Inference, empty "" for no inference. Notice that enabling reasoning might slow down SPARQL queries considerably.
-        INFERENCE_ENABLED: "true"
-        #disable this if you are running it on a local laptop. For (most/some) TNO servers it should be enabled. 
-        no_proxy:
-#        http_proxy: http://proxy.tno.nl:8080
+        INFERENCE_ENABLED: ""
+        no_proxy: ${env_no_proxy}
+        http_proxy: ${env_http_proxy}
+        https_proxy: ${env_https_proxy}
+    # extra_hosts:
+    #   - "fuseki:127.0.0.1"
     ports:
-      - "3030:3030"
+      - "${FUSEKI_PORT}:3030"
     mem_limit: 4000m
     environment:
+      no_proxy: ${env_no_proxy}
+      http_proxy: ${env_http_proxy}
+      https_proxy: ${env_https_proxy}
       ADMIN_PASSWORD: admin
       JVM_ARGS: -Xmx3500M
+  refine:
+    image: ci.tno.nl/toop/plasido/refine:latest
+    build: ./refine/
+    ports:
+      - "${REFINE_PORT}:3333"
+    environment:
+      no_proxy: ${env_no_proxy}
+      http_proxy: ${env_http_proxy}
+      https_proxy: ${env_https_proxy}
+      REFINE_MEMORY: "2G"
+      REFINE_VERBOSITY: "trace"
   grlc:
-    build: ./grlc/
+    image: ci.tno.nl/toop/plasido/grlc:latest
+    build:
+      context: ./grlc/
+      args:
+        no_proxy: ${env_no_proxy}
+        http_proxy: ${env_http_proxy}
+        https_proxy: ${env_https_proxy}
 #    image: clariah/grlc:latest
     restart: unless-stopped
     ports:
-     - "8001:80"
+     - "${GRLC_PORT}:80"
     environment:
+     - no_proxy=${env_no_proxy}
+     - http_proxy=${env_http_proxy}
+     - https_proxy=${env_https_proxy}
      - DEBUG=true
      - USERMAP_GID=1000
      - USERMAP_UID=1000
      - GRLC_GITHUB_ACCESS_TOKEN= ${env_github_access_token}
+     - GRLC_PORT
+     - FUSEKI_PORT
+     - GRLC_URL

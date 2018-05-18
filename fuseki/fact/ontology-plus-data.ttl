@@ -1,0 +1,2573 @@
+@prefix : <http://192.168.99.100/pizza/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix pizza: <http://192.168.99.100/pizza/> .
+@base <http://192.168.99.100/pizza/> .
+
+<http://192.168.99.100/pizza/> rdf:type owl:Ontology ;
+                                owl:versionInfo "v.1.5. Removed protege.owl import and references. Made ontology URI date-independent"@en ;
+                                rdfs:comment "An example ontology that contains all constructs required for the various versions of the Pizza Tutorial run by Manchester University (see http://www.co-ode.org/resources/tutorials/)"@en ;
+                                owl:versionInfo "v.1.4. Added Food class (used in domain/range of hasIngredient), Added several hasCountryOfOrigin restrictions on pizzas, Made hasTopping invers functional"@en ,
+                                                "version 1.5"^^xsd:string .
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://192.168.99.100/pizza/hasBase
+pizza:hasBase rdf:type owl:ObjectProperty ;
+              rdfs:subPropertyOf pizza:hasIngredient ;
+              owl:inverseOf pizza:isBaseOf ;
+              rdf:type owl:FunctionalProperty ,
+                       owl:InverseFunctionalProperty ;
+              rdfs:domain pizza:Pizza ;
+              rdfs:range pizza:PizzaBase .
+
+
+###  http://192.168.99.100/pizza/hasCountryOfOrigin
+pizza:hasCountryOfOrigin rdf:type owl:ObjectProperty .
+
+
+###  http://192.168.99.100/pizza/hasIngredient
+pizza:hasIngredient rdf:type owl:ObjectProperty ;
+                    owl:inverseOf pizza:isIngredientOf ;
+                    rdf:type owl:TransitiveProperty ;
+                    rdfs:domain pizza:Food ;
+                    rdfs:range pizza:Food ;
+                    rdfs:comment "NB Transitive - the ingredients of ingredients are ingredients of the whole"@en .
+
+
+###  http://192.168.99.100/pizza/hasSpiciness
+pizza:hasSpiciness rdf:type owl:ObjectProperty ,
+                            owl:FunctionalProperty ;
+                   rdfs:range pizza:Spiciness ;
+                   rdfs:comment "A property created to be used with the ValuePartition - Spiciness."@en .
+
+
+###  http://192.168.99.100/pizza/hasTopping
+pizza:hasTopping rdf:type owl:ObjectProperty ;
+                 rdfs:subPropertyOf pizza:hasIngredient ;
+                 owl:inverseOf pizza:isToppingOf ;
+                 rdf:type owl:InverseFunctionalProperty ;
+                 rdfs:domain pizza:Pizza ;
+                 rdfs:range pizza:PizzaTopping ;
+                 rdfs:comment "Note that hasTopping is inverse functional because isToppingOf is functional"@en .
+
+
+###  http://192.168.99.100/pizza/isBaseOf
+pizza:isBaseOf rdf:type owl:ObjectProperty ;
+               rdfs:subPropertyOf pizza:isIngredientOf ;
+               rdf:type owl:FunctionalProperty ,
+                        owl:InverseFunctionalProperty ;
+               rdfs:domain pizza:PizzaBase ;
+               rdfs:range pizza:Pizza .
+
+
+###  http://192.168.99.100/pizza/isIngredientOf
+pizza:isIngredientOf rdf:type owl:ObjectProperty ,
+                              owl:TransitiveProperty ;
+                     rdfs:domain pizza:Food ;
+                     rdfs:range pizza:Food ;
+                     rdfs:comment "The inverse property tree to hasIngredient - all subproperties and attributes of the properties should reflect those under hasIngredient."@en .
+
+
+###  http://192.168.99.100/pizza/isToppingOf
+pizza:isToppingOf rdf:type owl:ObjectProperty ;
+                  rdfs:subPropertyOf pizza:isIngredientOf ;
+                  rdf:type owl:FunctionalProperty ;
+                  rdfs:domain pizza:PizzaTopping ;
+                  rdfs:range pizza:Pizza ;
+                  rdfs:comment "Any given instance of topping should only be added to a single pizza (no cheap half-measures on our pizzas)"@en .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://192.168.99.100/pizza/American
+pizza:American rdf:type owl:Class ;
+               rdfs:subClassOf pizza:NamedPizza ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty pizza:hasTopping ;
+                                 owl:someValuesFrom pizza:MozzarellaTopping
+                               ] ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty pizza:hasTopping ;
+                                 owl:someValuesFrom pizza:PeperoniSausageTopping
+                               ] ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty pizza:hasTopping ;
+                                 owl:someValuesFrom pizza:TomatoTopping
+                               ] ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty pizza:hasTopping ;
+                                 owl:allValuesFrom [ rdf:type owl:Class ;
+                                                     owl:unionOf ( pizza:MozzarellaTopping
+                                                                   pizza:PeperoniSausageTopping
+                                                                   pizza:TomatoTopping
+                                                                 )
+                                                   ]
+                               ] ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty pizza:hasCountryOfOrigin ;
+                                 owl:hasValue pizza:America
+                               ] ;
+               owl:disjointWith pizza:AmericanHot ,
+                                pizza:Cajun ,
+                                pizza:Capricciosa ,
+                                pizza:Caprina ,
+                                pizza:Fiorentina ,
+                                pizza:FourSeasons ,
+                                pizza:FruttiDiMare ,
+                                pizza:Giardiniera ,
+                                pizza:LaReine ,
+                                pizza:Margherita ,
+                                pizza:Mushroom ,
+                                pizza:Napoletana ,
+                                pizza:Parmense ,
+                                pizza:PolloAdAstra ,
+                                pizza:PrinceCarlo ,
+                                pizza:QuattroFormaggi ,
+                                pizza:Rosa ,
+                                pizza:Siciliana ,
+                                pizza:SloppyGiuseppe ,
+                                pizza:Soho ,
+                                pizza:UnclosedPizza ,
+                                pizza:Veneziana ;
+               rdfs:label "Americana"@pt .
+
+
+###  http://192.168.99.100/pizza/AmericanHot
+pizza:AmericanHot rdf:type owl:Class ;
+                  rdfs:subClassOf pizza:NamedPizza ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:HotGreenPepperTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:JalapenoPepperTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:MozzarellaTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:PeperoniSausageTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:TomatoTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:allValuesFrom [ rdf:type owl:Class ;
+                                                        owl:unionOf ( pizza:HotGreenPepperTopping
+                                                                      pizza:JalapenoPepperTopping
+                                                                      pizza:MozzarellaTopping
+                                                                      pizza:PeperoniSausageTopping
+                                                                      pizza:TomatoTopping
+                                                                    )
+                                                      ]
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasCountryOfOrigin ;
+                                    owl:hasValue pizza:America
+                                  ] ;
+                  owl:disjointWith pizza:Cajun ,
+                                   pizza:Capricciosa ,
+                                   pizza:Caprina ,
+                                   pizza:Fiorentina ,
+                                   pizza:FourSeasons ,
+                                   pizza:FruttiDiMare ,
+                                   pizza:Giardiniera ,
+                                   pizza:LaReine ,
+                                   pizza:Margherita ,
+                                   pizza:Mushroom ,
+                                   pizza:Napoletana ,
+                                   pizza:Parmense ,
+                                   pizza:PolloAdAstra ,
+                                   pizza:PrinceCarlo ,
+                                   pizza:QuattroFormaggi ,
+                                   pizza:Rosa ,
+                                   pizza:Siciliana ,
+                                   pizza:SloppyGiuseppe ,
+                                   pizza:Soho ,
+                                   pizza:UnclosedPizza ,
+                                   pizza:Veneziana ;
+                  rdfs:label "AmericanaPicante"@pt .
+
+
+###  http://192.168.99.100/pizza/AnchoviesTopping
+pizza:AnchoviesTopping rdf:type owl:Class ;
+                       rdfs:subClassOf pizza:FishTopping ;
+                       owl:disjointWith pizza:MixedSeafoodTopping ,
+                                        pizza:PrawnsTopping ;
+                       rdfs:label "CoberturaDeAnchovies"@pt .
+
+
+###  http://192.168.99.100/pizza/ArtichokeTopping
+pizza:ArtichokeTopping rdf:type owl:Class ;
+                       rdfs:subClassOf pizza:VegetableTopping ,
+                                       [ rdf:type owl:Restriction ;
+                                         owl:onProperty pizza:hasSpiciness ;
+                                         owl:someValuesFrom pizza:Mild
+                                       ] ;
+                       owl:disjointWith pizza:AsparagusTopping ,
+                                        pizza:CaperTopping ,
+                                        pizza:GarlicTopping ,
+                                        pizza:LeekTopping ,
+                                        pizza:MushroomTopping ,
+                                        pizza:OliveTopping ,
+                                        pizza:OnionTopping ,
+                                        pizza:PepperTopping ,
+                                        pizza:PetitPoisTopping ,
+                                        pizza:RocketTopping ,
+                                        pizza:SpinachTopping ,
+                                        pizza:TomatoTopping ;
+                       rdfs:label "CoberturaDeArtichoke"@pt .
+
+
+###  http://192.168.99.100/pizza/AsparagusTopping
+pizza:AsparagusTopping rdf:type owl:Class ;
+                       rdfs:subClassOf pizza:VegetableTopping ,
+                                       [ rdf:type owl:Restriction ;
+                                         owl:onProperty pizza:hasSpiciness ;
+                                         owl:someValuesFrom pizza:Mild
+                                       ] ;
+                       owl:disjointWith pizza:CaperTopping ,
+                                        pizza:GarlicTopping ,
+                                        pizza:LeekTopping ,
+                                        pizza:MushroomTopping ,
+                                        pizza:OliveTopping ,
+                                        pizza:OnionTopping ,
+                                        pizza:PepperTopping ,
+                                        pizza:PetitPoisTopping ,
+                                        pizza:RocketTopping ,
+                                        pizza:SpinachTopping ,
+                                        pizza:TomatoTopping ;
+                       rdfs:label "CoberturaDeAspargos"@pt .
+
+
+###  http://192.168.99.100/pizza/Cajun
+pizza:Cajun rdf:type owl:Class ;
+            rdfs:subClassOf pizza:NamedPizza ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty pizza:hasTopping ;
+                              owl:someValuesFrom pizza:MozzarellaTopping
+                            ] ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty pizza:hasTopping ;
+                              owl:someValuesFrom pizza:OnionTopping
+                            ] ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty pizza:hasTopping ;
+                              owl:someValuesFrom pizza:PeperonataTopping
+                            ] ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty pizza:hasTopping ;
+                              owl:someValuesFrom pizza:PrawnsTopping
+                            ] ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty pizza:hasTopping ;
+                              owl:someValuesFrom pizza:TobascoPepperSauce
+                            ] ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty pizza:hasTopping ;
+                              owl:someValuesFrom pizza:TomatoTopping
+                            ] ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty pizza:hasTopping ;
+                              owl:allValuesFrom [ rdf:type owl:Class ;
+                                                  owl:unionOf ( pizza:MozzarellaTopping
+                                                                pizza:OnionTopping
+                                                                pizza:PeperonataTopping
+                                                                pizza:PrawnsTopping
+                                                                pizza:TobascoPepperSauce
+                                                                pizza:TomatoTopping
+                                                              )
+                                                ]
+                            ] ;
+            owl:disjointWith pizza:Capricciosa ,
+                             pizza:Caprina ,
+                             pizza:Fiorentina ,
+                             pizza:FourSeasons ,
+                             pizza:FruttiDiMare ,
+                             pizza:Giardiniera ,
+                             pizza:LaReine ,
+                             pizza:Margherita ,
+                             pizza:Mushroom ,
+                             pizza:Napoletana ,
+                             pizza:Parmense ,
+                             pizza:PolloAdAstra ,
+                             pizza:PrinceCarlo ,
+                             pizza:QuattroFormaggi ,
+                             pizza:Rosa ,
+                             pizza:Siciliana ,
+                             pizza:SloppyGiuseppe ,
+                             pizza:Soho ,
+                             pizza:UnclosedPizza ,
+                             pizza:Veneziana ;
+            rdfs:label "Cajun"@pt .
+
+
+###  http://192.168.99.100/pizza/CajunSpiceTopping
+pizza:CajunSpiceTopping rdf:type owl:Class ;
+                        rdfs:subClassOf pizza:HerbSpiceTopping ,
+                                        [ rdf:type owl:Restriction ;
+                                          owl:onProperty pizza:hasSpiciness ;
+                                          owl:someValuesFrom pizza:Hot
+                                        ] ;
+                        owl:disjointWith pizza:RosemaryTopping ;
+                        rdfs:label "CoberturaDeCajun"@pt .
+
+
+###  http://192.168.99.100/pizza/CaperTopping
+pizza:CaperTopping rdf:type owl:Class ;
+                   rdfs:subClassOf pizza:VegetableTopping ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty pizza:hasSpiciness ;
+                                     owl:someValuesFrom pizza:Mild
+                                   ] ;
+                   owl:disjointWith pizza:GarlicTopping ,
+                                    pizza:LeekTopping ,
+                                    pizza:MushroomTopping ,
+                                    pizza:OliveTopping ,
+                                    pizza:OnionTopping ,
+                                    pizza:PepperTopping ,
+                                    pizza:PetitPoisTopping ,
+                                    pizza:RocketTopping ,
+                                    pizza:SpinachTopping ,
+                                    pizza:TomatoTopping ;
+                   rdfs:label "CoberturaDeCaper"@pt .
+
+
+###  http://192.168.99.100/pizza/Capricciosa
+pizza:Capricciosa rdf:type owl:Class ;
+                  rdfs:subClassOf pizza:NamedPizza ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:AnchoviesTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:CaperTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:HamTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:MozzarellaTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:OliveTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:PeperonataTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:TomatoTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:allValuesFrom [ rdf:type owl:Class ;
+                                                        owl:unionOf ( pizza:AnchoviesTopping
+                                                                      pizza:CaperTopping
+                                                                      pizza:HamTopping
+                                                                      pizza:MozzarellaTopping
+                                                                      pizza:OliveTopping
+                                                                      pizza:PeperonataTopping
+                                                                      pizza:TomatoTopping
+                                                                    )
+                                                      ]
+                                  ] ;
+                  owl:disjointWith pizza:Caprina ,
+                                   pizza:Fiorentina ,
+                                   pizza:FourSeasons ,
+                                   pizza:FruttiDiMare ,
+                                   pizza:Giardiniera ,
+                                   pizza:LaReine ,
+                                   pizza:Margherita ,
+                                   pizza:Mushroom ,
+                                   pizza:Napoletana ,
+                                   pizza:Parmense ,
+                                   pizza:PolloAdAstra ,
+                                   pizza:PrinceCarlo ,
+                                   pizza:QuattroFormaggi ,
+                                   pizza:Rosa ,
+                                   pizza:Siciliana ,
+                                   pizza:SloppyGiuseppe ,
+                                   pizza:Soho ,
+                                   pizza:UnclosedPizza ,
+                                   pizza:Veneziana ;
+                  rdfs:label "Capricciosa"@pt .
+
+
+###  http://192.168.99.100/pizza/Caprina
+pizza:Caprina rdf:type owl:Class ;
+              rdfs:subClassOf pizza:NamedPizza ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty pizza:hasTopping ;
+                                owl:someValuesFrom pizza:GoatsCheeseTopping
+                              ] ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty pizza:hasTopping ;
+                                owl:someValuesFrom pizza:MozzarellaTopping
+                              ] ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty pizza:hasTopping ;
+                                owl:someValuesFrom pizza:SundriedTomatoTopping
+                              ] ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty pizza:hasTopping ;
+                                owl:someValuesFrom pizza:TomatoTopping
+                              ] ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty pizza:hasTopping ;
+                                owl:allValuesFrom [ rdf:type owl:Class ;
+                                                    owl:unionOf ( pizza:GoatsCheeseTopping
+                                                                  pizza:MozzarellaTopping
+                                                                  pizza:SundriedTomatoTopping
+                                                                  pizza:TomatoTopping
+                                                                )
+                                                  ]
+                              ] ;
+              owl:disjointWith pizza:Fiorentina ,
+                               pizza:FourSeasons ,
+                               pizza:FruttiDiMare ,
+                               pizza:Giardiniera ,
+                               pizza:LaReine ,
+                               pizza:Margherita ,
+                               pizza:Mushroom ,
+                               pizza:Napoletana ,
+                               pizza:Parmense ,
+                               pizza:PolloAdAstra ,
+                               pizza:PrinceCarlo ,
+                               pizza:QuattroFormaggi ,
+                               pizza:Rosa ,
+                               pizza:Siciliana ,
+                               pizza:SloppyGiuseppe ,
+                               pizza:Soho ,
+                               pizza:UnclosedPizza ,
+                               pizza:Veneziana ;
+              rdfs:label "Caprina"@pt .
+
+
+###  http://192.168.99.100/pizza/CheeseTopping
+pizza:CheeseTopping rdf:type owl:Class ;
+                    rdfs:subClassOf pizza:PizzaTopping ;
+                    owl:disjointWith pizza:FishTopping ,
+                                     pizza:FruitTopping ,
+                                     pizza:HerbSpiceTopping ,
+                                     pizza:MeatTopping ,
+                                     pizza:NutTopping ,
+                                     pizza:SauceTopping ,
+                                     pizza:VegetableTopping ;
+                    rdfs:label "CoberturaDeQueijo"@pt .
+
+
+###  http://192.168.99.100/pizza/CheeseyPizza
+pizza:CheeseyPizza rdf:type owl:Class ;
+                   owl:equivalentClass [ owl:intersectionOf ( pizza:Pizza
+                                                              [ rdf:type owl:Restriction ;
+                                                                owl:onProperty pizza:hasTopping ;
+                                                                owl:someValuesFrom pizza:CheeseTopping
+                                                              ]
+                                                            ) ;
+                                         rdf:type owl:Class
+                                       ] ;
+                   rdfs:comment "Any pizza that has at least 1 cheese topping."@en ;
+                   rdfs:label "PizzaComQueijo"@pt .
+
+
+###  http://192.168.99.100/pizza/CheeseyVegetableTopping
+pizza:CheeseyVegetableTopping rdf:type owl:Class ;
+                              rdfs:subClassOf pizza:CheeseTopping ,
+                                              pizza:VegetableTopping ;
+                              rdfs:comment "This class will be inconsistent. This is because we have given it 2 disjoint parents, which means it could never have any members (as nothing can simultaneously be a CheeseTopping and a VegetableTopping). NB Called ProbeInconsistentTopping in the ProtegeOWL Tutorial."@en ;
+                              rdfs:label "CoberturaDeQueijoComVegetais"@pt .
+
+
+###  http://192.168.99.100/pizza/ChickenTopping
+pizza:ChickenTopping rdf:type owl:Class ;
+                     rdfs:subClassOf pizza:MeatTopping ,
+                                     [ rdf:type owl:Restriction ;
+                                       owl:onProperty pizza:hasSpiciness ;
+                                       owl:someValuesFrom pizza:Mild
+                                     ] ;
+                     owl:disjointWith pizza:HamTopping ,
+                                      pizza:HotSpicedBeefTopping ,
+                                      pizza:PeperoniSausageTopping ;
+                     rdfs:label "CoberturaDeFrango"@pt .
+
+
+###  http://192.168.99.100/pizza/Country
+pizza:Country rdf:type owl:Class ;
+              owl:equivalentClass [ owl:intersectionOf ( pizza:DomainConcept
+                                                         [ rdf:type owl:Class ;
+                                                           owl:oneOf ( pizza:America
+                                                                       pizza:England
+                                                                       pizza:France
+                                                                       pizza:Germany
+                                                                       pizza:Italy
+                                                                     )
+                                                         ]
+                                                       ) ;
+                                    rdf:type owl:Class
+                                  ] ;
+              rdfs:comment "A class that is equivalent to the set of individuals that are described in the enumeration - ie Countries can only be either America, England, France, Germany or Italy and nothing else. Note that these individuals have been asserted to be allDifferent from each other."@en ;
+              rdfs:label "Pais"@pt .
+
+
+###  http://192.168.99.100/pizza/DeepPanBase
+pizza:DeepPanBase rdf:type owl:Class ;
+                  rdfs:subClassOf pizza:PizzaBase ;
+                  owl:disjointWith pizza:ThinAndCrispyBase ;
+                  rdfs:label "BaseEspessa"@pt .
+
+
+###  http://192.168.99.100/pizza/DomainConcept
+pizza:DomainConcept rdf:type owl:Class ;
+                    owl:disjointWith pizza:ValuePartition .
+
+
+###  http://192.168.99.100/pizza/Fiorentina
+pizza:Fiorentina rdf:type owl:Class ;
+                 rdfs:subClassOf pizza:NamedPizza ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty pizza:hasTopping ;
+                                   owl:someValuesFrom pizza:GarlicTopping
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty pizza:hasTopping ;
+                                   owl:someValuesFrom pizza:MozzarellaTopping
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty pizza:hasTopping ;
+                                   owl:someValuesFrom pizza:OliveTopping
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty pizza:hasTopping ;
+                                   owl:someValuesFrom pizza:ParmesanTopping
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty pizza:hasTopping ;
+                                   owl:someValuesFrom pizza:SpinachTopping
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty pizza:hasTopping ;
+                                   owl:someValuesFrom pizza:TomatoTopping
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty pizza:hasTopping ;
+                                   owl:allValuesFrom [ rdf:type owl:Class ;
+                                                       owl:unionOf ( pizza:GarlicTopping
+                                                                     pizza:MozzarellaTopping
+                                                                     pizza:OliveTopping
+                                                                     pizza:ParmesanTopping
+                                                                     pizza:SpinachTopping
+                                                                     pizza:TomatoTopping
+                                                                   )
+                                                     ]
+                                 ] ;
+                 owl:disjointWith pizza:FourSeasons ,
+                                  pizza:FruttiDiMare ,
+                                  pizza:Giardiniera ,
+                                  pizza:LaReine ,
+                                  pizza:Margherita ,
+                                  pizza:Mushroom ,
+                                  pizza:Napoletana ,
+                                  pizza:Parmense ,
+                                  pizza:PolloAdAstra ,
+                                  pizza:PrinceCarlo ,
+                                  pizza:QuattroFormaggi ,
+                                  pizza:Rosa ,
+                                  pizza:Siciliana ,
+                                  pizza:SloppyGiuseppe ,
+                                  pizza:Soho ,
+                                  pizza:UnclosedPizza ,
+                                  pizza:Veneziana ;
+                 rdfs:label "Fiorentina"@pt .
+
+
+###  http://192.168.99.100/pizza/FishTopping
+pizza:FishTopping rdf:type owl:Class ;
+                  rdfs:subClassOf pizza:PizzaTopping ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasSpiciness ;
+                                    owl:someValuesFrom pizza:Mild
+                                  ] ;
+                  owl:disjointWith pizza:FruitTopping ,
+                                   pizza:HerbSpiceTopping ,
+                                   pizza:MeatTopping ,
+                                   pizza:NutTopping ,
+                                   pizza:SauceTopping ,
+                                   pizza:VegetableTopping ;
+                  rdfs:label "CoberturaDePeixe"@pt .
+
+
+###  http://192.168.99.100/pizza/Food
+pizza:Food rdf:type owl:Class ;
+           rdfs:subClassOf pizza:DomainConcept .
+
+
+###  http://192.168.99.100/pizza/FourCheesesTopping
+pizza:FourCheesesTopping rdf:type owl:Class ;
+                         rdfs:subClassOf pizza:CheeseTopping ,
+                                         [ rdf:type owl:Restriction ;
+                                           owl:onProperty pizza:hasSpiciness ;
+                                           owl:someValuesFrom pizza:Mild
+                                         ] ;
+                         owl:disjointWith pizza:GoatsCheeseTopping ,
+                                          pizza:GorgonzolaTopping ,
+                                          pizza:MozzarellaTopping ,
+                                          pizza:ParmesanTopping ;
+                         rdfs:label "CoberturaQuatroQueijos"@pt .
+
+
+###  http://192.168.99.100/pizza/FourSeasons
+pizza:FourSeasons rdf:type owl:Class ;
+                  rdfs:subClassOf pizza:NamedPizza ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:AnchoviesTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:CaperTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:MozzarellaTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:MushroomTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:OliveTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:PeperoniSausageTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:TomatoTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:allValuesFrom [ rdf:type owl:Class ;
+                                                        owl:unionOf ( pizza:AnchoviesTopping
+                                                                      pizza:CaperTopping
+                                                                      pizza:MozzarellaTopping
+                                                                      pizza:MushroomTopping
+                                                                      pizza:OliveTopping
+                                                                      pizza:PeperoniSausageTopping
+                                                                      pizza:TomatoTopping
+                                                                    )
+                                                      ]
+                                  ] ;
+                  owl:disjointWith pizza:FruttiDiMare ,
+                                   pizza:Giardiniera ,
+                                   pizza:LaReine ,
+                                   pizza:Margherita ,
+                                   pizza:Mushroom ,
+                                   pizza:Napoletana ,
+                                   pizza:Parmense ,
+                                   pizza:PolloAdAstra ,
+                                   pizza:PrinceCarlo ,
+                                   pizza:QuattroFormaggi ,
+                                   pizza:Rosa ,
+                                   pizza:Siciliana ,
+                                   pizza:SloppyGiuseppe ,
+                                   pizza:Soho ,
+                                   pizza:UnclosedPizza ,
+                                   pizza:Veneziana ;
+                  rdfs:label "QuatroQueijos"@pt .
+
+
+###  http://192.168.99.100/pizza/FruitTopping
+pizza:FruitTopping rdf:type owl:Class ;
+                   rdfs:subClassOf pizza:PizzaTopping ;
+                   owl:disjointWith pizza:HerbSpiceTopping ,
+                                    pizza:MeatTopping ,
+                                    pizza:NutTopping ,
+                                    pizza:SauceTopping ,
+                                    pizza:VegetableTopping ;
+                   rdfs:label "CoberturaDeFrutas"@pt .
+
+
+###  http://192.168.99.100/pizza/FruttiDiMare
+pizza:FruttiDiMare rdf:type owl:Class ;
+                   rdfs:subClassOf pizza:NamedPizza ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty pizza:hasTopping ;
+                                     owl:someValuesFrom pizza:GarlicTopping
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty pizza:hasTopping ;
+                                     owl:someValuesFrom pizza:MixedSeafoodTopping
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty pizza:hasTopping ;
+                                     owl:someValuesFrom pizza:TomatoTopping
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty pizza:hasTopping ;
+                                     owl:allValuesFrom [ rdf:type owl:Class ;
+                                                         owl:unionOf ( pizza:GarlicTopping
+                                                                       pizza:MixedSeafoodTopping
+                                                                       pizza:TomatoTopping
+                                                                     )
+                                                       ]
+                                   ] ;
+                   owl:disjointWith pizza:Giardiniera ,
+                                    pizza:LaReine ,
+                                    pizza:Margherita ,
+                                    pizza:Mushroom ,
+                                    pizza:Napoletana ,
+                                    pizza:Parmense ,
+                                    pizza:PolloAdAstra ,
+                                    pizza:PrinceCarlo ,
+                                    pizza:QuattroFormaggi ,
+                                    pizza:Rosa ,
+                                    pizza:Siciliana ,
+                                    pizza:SloppyGiuseppe ,
+                                    pizza:Soho ,
+                                    pizza:UnclosedPizza ,
+                                    pizza:Veneziana ;
+                   rdfs:label "FrutosDoMar"@pt .
+
+
+###  http://192.168.99.100/pizza/GarlicTopping
+pizza:GarlicTopping rdf:type owl:Class ;
+                    rdfs:subClassOf pizza:VegetableTopping ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty pizza:hasSpiciness ;
+                                      owl:someValuesFrom pizza:Medium
+                                    ] ;
+                    owl:disjointWith pizza:LeekTopping ,
+                                     pizza:MushroomTopping ,
+                                     pizza:OliveTopping ,
+                                     pizza:OnionTopping ,
+                                     pizza:PepperTopping ,
+                                     pizza:PetitPoisTopping ,
+                                     pizza:RocketTopping ,
+                                     pizza:SpinachTopping ,
+                                     pizza:TomatoTopping ;
+                    rdfs:label "CoberturaDeAlho"@pt .
+
+
+###  http://192.168.99.100/pizza/Giardiniera
+pizza:Giardiniera rdf:type owl:Class ;
+                  rdfs:subClassOf pizza:NamedPizza ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:LeekTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:MozzarellaTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:MushroomTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:OliveTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:PeperonataTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:PetitPoisTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:SlicedTomatoTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:TomatoTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:allValuesFrom [ rdf:type owl:Class ;
+                                                        owl:unionOf ( pizza:LeekTopping
+                                                                      pizza:MozzarellaTopping
+                                                                      pizza:MushroomTopping
+                                                                      pizza:OliveTopping
+                                                                      pizza:PeperonataTopping
+                                                                      pizza:PetitPoisTopping
+                                                                      pizza:SlicedTomatoTopping
+                                                                      pizza:TomatoTopping
+                                                                    )
+                                                      ]
+                                  ] ;
+                  owl:disjointWith pizza:LaReine ,
+                                   pizza:Margherita ,
+                                   pizza:Mushroom ,
+                                   pizza:Napoletana ,
+                                   pizza:Parmense ,
+                                   pizza:PolloAdAstra ,
+                                   pizza:PrinceCarlo ,
+                                   pizza:QuattroFormaggi ,
+                                   pizza:Rosa ,
+                                   pizza:Siciliana ,
+                                   pizza:SloppyGiuseppe ,
+                                   pizza:Soho ,
+                                   pizza:UnclosedPizza ,
+                                   pizza:Veneziana ;
+                  rdfs:label "Giardiniera"@pt .
+
+
+###  http://192.168.99.100/pizza/GoatsCheeseTopping
+pizza:GoatsCheeseTopping rdf:type owl:Class ;
+                         rdfs:subClassOf pizza:CheeseTopping ,
+                                         [ rdf:type owl:Restriction ;
+                                           owl:onProperty pizza:hasSpiciness ;
+                                           owl:someValuesFrom pizza:Mild
+                                         ] ;
+                         owl:disjointWith pizza:GorgonzolaTopping ,
+                                          pizza:MozzarellaTopping ,
+                                          pizza:ParmesanTopping ;
+                         rdfs:label "CoberturaDeQueijoDeCabra"@pt .
+
+
+###  http://192.168.99.100/pizza/GorgonzolaTopping
+pizza:GorgonzolaTopping rdf:type owl:Class ;
+                        rdfs:subClassOf pizza:CheeseTopping ,
+                                        [ rdf:type owl:Restriction ;
+                                          owl:onProperty pizza:hasSpiciness ;
+                                          owl:someValuesFrom pizza:Mild
+                                        ] ;
+                        owl:disjointWith pizza:MozzarellaTopping ,
+                                         pizza:ParmesanTopping ;
+                        rdfs:label "CoberturaDeGorgonzola"@pt .
+
+
+###  http://192.168.99.100/pizza/GreenPepperTopping
+pizza:GreenPepperTopping rdf:type owl:Class ;
+                         rdfs:subClassOf pizza:PepperTopping ;
+                         owl:disjointWith pizza:JalapenoPepperTopping ,
+                                          pizza:PeperonataTopping ,
+                                          pizza:SweetPepperTopping ;
+                         rdfs:label "CoberturaDePimentaoVerde"@pt .
+
+
+###  http://192.168.99.100/pizza/HamTopping
+pizza:HamTopping rdf:type owl:Class ;
+                 rdfs:subClassOf pizza:MeatTopping ;
+                 owl:disjointWith pizza:HotSpicedBeefTopping ,
+                                  pizza:PeperoniSausageTopping ;
+                 rdfs:label "CoberturaDePresunto"@pt .
+
+
+###  http://192.168.99.100/pizza/HerbSpiceTopping
+pizza:HerbSpiceTopping rdf:type owl:Class ;
+                       rdfs:subClassOf pizza:PizzaTopping ;
+                       owl:disjointWith pizza:MeatTopping ,
+                                        pizza:NutTopping ,
+                                        pizza:SauceTopping ,
+                                        pizza:VegetableTopping ;
+                       rdfs:label "CoberturaDeErvas"@pt .
+
+
+###  http://192.168.99.100/pizza/Hot
+pizza:Hot rdf:type owl:Class ;
+          rdfs:subClassOf pizza:Spiciness ;
+          owl:disjointWith pizza:Medium ,
+                           pizza:Mild ;
+          rdfs:label "Picante"@pt .
+
+
+###  http://192.168.99.100/pizza/HotGreenPepperTopping
+pizza:HotGreenPepperTopping rdf:type owl:Class ;
+                            rdfs:subClassOf pizza:GreenPepperTopping ,
+                                            [ rdf:type owl:Restriction ;
+                                              owl:onProperty pizza:hasSpiciness ;
+                                              owl:someValuesFrom pizza:Hot
+                                            ] ;
+                            rdfs:label "CoberturaDePimentaoVerdePicante"@pt .
+
+
+###  http://192.168.99.100/pizza/HotSpicedBeefTopping
+pizza:HotSpicedBeefTopping rdf:type owl:Class ;
+                           rdfs:subClassOf pizza:MeatTopping ,
+                                           [ rdf:type owl:Restriction ;
+                                             owl:onProperty pizza:hasSpiciness ;
+                                             owl:someValuesFrom pizza:Hot
+                                           ] ;
+                           owl:disjointWith pizza:PeperoniSausageTopping ;
+                           rdfs:label "CoberturaDeBifePicante"@pt .
+
+
+###  http://192.168.99.100/pizza/IceCream
+pizza:IceCream rdf:type owl:Class ;
+               rdfs:subClassOf pizza:Food ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty pizza:hasTopping ;
+                                 owl:someValuesFrom pizza:FruitTopping
+                               ] ;
+               owl:disjointWith pizza:Pizza ,
+                                pizza:PizzaBase ,
+                                pizza:PizzaTopping ;
+               rdfs:comment "A class to demonstrate mistakes made with setting a property domain. The property hasTopping has a domain of Pizza. This means that the reasoner can infer that all individuals using the hasTopping property must be of type Pizza. Because of the restriction on this class, all members of IceCream must use the hasTopping property, and therefore must also be members of Pizza. However, Pizza and IceCream are disjoint, so this causes an inconsistency. If they were not disjoint, IceCream would be inferred to be a subclass of Pizza."@en ;
+               rdfs:label "Sorvete"@pt .
+
+
+###  http://192.168.99.100/pizza/InterestingPizza
+pizza:InterestingPizza rdf:type owl:Class ;
+                       owl:equivalentClass [ owl:intersectionOf ( pizza:Pizza
+                                                                  [ rdf:type owl:Restriction ;
+                                                                    owl:onProperty pizza:hasTopping ;
+                                                                    owl:minCardinality "3"^^xsd:nonNegativeInteger
+                                                                  ]
+                                                                ) ;
+                                             rdf:type owl:Class
+                                           ] ;
+                       rdfs:comment "Any pizza that has at least 3 toppings. Note that this is a cardinality constraint on the hasTopping property and NOT a qualified cardinality constraint (QCR). A QCR would specify from which class the members in this relationship must be. eg has at least 3 toppings from PizzaTopping. This is currently not supported in OWL."@en ;
+                       rdfs:label "PizzaInteressante"@pt .
+
+
+###  http://192.168.99.100/pizza/JalapenoPepperTopping
+pizza:JalapenoPepperTopping rdf:type owl:Class ;
+                            rdfs:subClassOf pizza:PepperTopping ,
+                                            [ rdf:type owl:Restriction ;
+                                              owl:onProperty pizza:hasSpiciness ;
+                                              owl:someValuesFrom pizza:Hot
+                                            ] ;
+                            owl:disjointWith pizza:PeperonataTopping ,
+                                             pizza:SweetPepperTopping ;
+                            rdfs:label "CoberturaDeJalapeno"@pt .
+
+
+###  http://192.168.99.100/pizza/LaReine
+pizza:LaReine rdf:type owl:Class ;
+              rdfs:subClassOf pizza:NamedPizza ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty pizza:hasTopping ;
+                                owl:someValuesFrom pizza:HamTopping
+                              ] ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty pizza:hasTopping ;
+                                owl:someValuesFrom pizza:MozzarellaTopping
+                              ] ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty pizza:hasTopping ;
+                                owl:someValuesFrom pizza:MushroomTopping
+                              ] ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty pizza:hasTopping ;
+                                owl:someValuesFrom pizza:OliveTopping
+                              ] ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty pizza:hasTopping ;
+                                owl:someValuesFrom pizza:TomatoTopping
+                              ] ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty pizza:hasTopping ;
+                                owl:allValuesFrom [ rdf:type owl:Class ;
+                                                    owl:unionOf ( pizza:HamTopping
+                                                                  pizza:MozzarellaTopping
+                                                                  pizza:MushroomTopping
+                                                                  pizza:OliveTopping
+                                                                  pizza:TomatoTopping
+                                                                )
+                                                  ]
+                              ] ;
+              owl:disjointWith pizza:Margherita ,
+                               pizza:Mushroom ,
+                               pizza:Napoletana ,
+                               pizza:Parmense ,
+                               pizza:PolloAdAstra ,
+                               pizza:PrinceCarlo ,
+                               pizza:QuattroFormaggi ,
+                               pizza:Rosa ,
+                               pizza:Siciliana ,
+                               pizza:SloppyGiuseppe ,
+                               pizza:Soho ,
+                               pizza:UnclosedPizza ,
+                               pizza:Veneziana ;
+              rdfs:label "LaReine"@pt .
+
+
+###  http://192.168.99.100/pizza/LeekTopping
+pizza:LeekTopping rdf:type owl:Class ;
+                  rdfs:subClassOf pizza:VegetableTopping ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasSpiciness ;
+                                    owl:someValuesFrom pizza:Mild
+                                  ] ;
+                  owl:disjointWith pizza:MushroomTopping ,
+                                   pizza:OliveTopping ,
+                                   pizza:OnionTopping ,
+                                   pizza:PepperTopping ,
+                                   pizza:PetitPoisTopping ,
+                                   pizza:RocketTopping ,
+                                   pizza:SpinachTopping ,
+                                   pizza:TomatoTopping ;
+                  rdfs:label "CoberturaDeLeek"@pt .
+
+
+###  http://192.168.99.100/pizza/Margherita
+pizza:Margherita rdf:type owl:Class ;
+                 rdfs:subClassOf pizza:NamedPizza ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty pizza:hasTopping ;
+                                   owl:someValuesFrom pizza:MozzarellaTopping
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty pizza:hasTopping ;
+                                   owl:someValuesFrom pizza:TomatoTopping
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty pizza:hasTopping ;
+                                   owl:allValuesFrom [ rdf:type owl:Class ;
+                                                       owl:unionOf ( pizza:MozzarellaTopping
+                                                                     pizza:TomatoTopping
+                                                                   )
+                                                     ]
+                                 ] ;
+                 owl:disjointWith pizza:Mushroom ,
+                                  pizza:Napoletana ,
+                                  pizza:Parmense ,
+                                  pizza:PolloAdAstra ,
+                                  pizza:PrinceCarlo ,
+                                  pizza:QuattroFormaggi ,
+                                  pizza:Rosa ,
+                                  pizza:Siciliana ,
+                                  pizza:SloppyGiuseppe ,
+                                  pizza:Soho ,
+                                  pizza:UnclosedPizza ,
+                                  pizza:Veneziana ;
+                 rdfs:label "Margherita"@pt .
+
+
+###  http://192.168.99.100/pizza/MeatTopping
+pizza:MeatTopping rdf:type owl:Class ;
+                  rdfs:subClassOf pizza:PizzaTopping ;
+                  owl:disjointWith pizza:NutTopping ,
+                                   pizza:SauceTopping ,
+                                   pizza:VegetableTopping ;
+                  rdfs:label "CoberturaDeCarne"@pt .
+
+
+###  http://192.168.99.100/pizza/MeatyPizza
+pizza:MeatyPizza rdf:type owl:Class ;
+                 owl:equivalentClass [ owl:intersectionOf ( pizza:Pizza
+                                                            [ rdf:type owl:Restriction ;
+                                                              owl:onProperty pizza:hasTopping ;
+                                                              owl:someValuesFrom pizza:MeatTopping
+                                                            ]
+                                                          ) ;
+                                       rdf:type owl:Class
+                                     ] ;
+                 rdfs:comment "Any pizza that has at least one meat topping"@en ;
+                 rdfs:label "PizzaDeCarne"@pt .
+
+
+###  http://192.168.99.100/pizza/Medium
+pizza:Medium rdf:type owl:Class ;
+             rdfs:subClassOf pizza:Spiciness ;
+             owl:disjointWith pizza:Mild ;
+             rdfs:label "Media"@pt .
+
+
+###  http://192.168.99.100/pizza/Mild
+pizza:Mild rdf:type owl:Class ;
+           rdfs:subClassOf pizza:Spiciness ;
+           rdfs:label "NaoPicante"@pt .
+
+
+###  http://192.168.99.100/pizza/MixedSeafoodTopping
+pizza:MixedSeafoodTopping rdf:type owl:Class ;
+                          rdfs:subClassOf pizza:FishTopping ;
+                          owl:disjointWith pizza:PrawnsTopping ;
+                          rdfs:label "CoberturaDeFrutosDoMarMistos"@pt .
+
+
+###  http://192.168.99.100/pizza/MozzarellaTopping
+pizza:MozzarellaTopping rdf:type owl:Class ;
+                        rdfs:subClassOf pizza:CheeseTopping ,
+                                        [ rdf:type owl:Restriction ;
+                                          owl:onProperty pizza:hasSpiciness ;
+                                          owl:someValuesFrom pizza:Mild
+                                        ] ,
+                                        [ rdf:type owl:Restriction ;
+                                          owl:onProperty pizza:hasCountryOfOrigin ;
+                                          owl:hasValue pizza:Italy
+                                        ] ;
+                        owl:disjointWith pizza:ParmesanTopping ;
+                        rdfs:label "CoberturaDeMozzarella"@pt .
+
+
+###  http://192.168.99.100/pizza/Mushroom
+pizza:Mushroom rdf:type owl:Class ;
+               rdfs:subClassOf pizza:NamedPizza ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty pizza:hasTopping ;
+                                 owl:someValuesFrom pizza:MozzarellaTopping
+                               ] ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty pizza:hasTopping ;
+                                 owl:someValuesFrom pizza:MushroomTopping
+                               ] ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty pizza:hasTopping ;
+                                 owl:someValuesFrom pizza:TomatoTopping
+                               ] ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty pizza:hasTopping ;
+                                 owl:allValuesFrom [ rdf:type owl:Class ;
+                                                     owl:unionOf ( pizza:MozzarellaTopping
+                                                                   pizza:MushroomTopping
+                                                                   pizza:TomatoTopping
+                                                                 )
+                                                   ]
+                               ] ;
+               owl:disjointWith pizza:Napoletana ,
+                                pizza:Parmense ,
+                                pizza:PolloAdAstra ,
+                                pizza:PrinceCarlo ,
+                                pizza:QuattroFormaggi ,
+                                pizza:Rosa ,
+                                pizza:Siciliana ,
+                                pizza:SloppyGiuseppe ,
+                                pizza:Soho ,
+                                pizza:UnclosedPizza ,
+                                pizza:Veneziana ;
+               rdfs:label "Cogumelo"@pt .
+
+
+###  http://192.168.99.100/pizza/MushroomTopping
+pizza:MushroomTopping rdf:type owl:Class ;
+                      rdfs:subClassOf pizza:VegetableTopping ,
+                                      [ rdf:type owl:Restriction ;
+                                        owl:onProperty pizza:hasSpiciness ;
+                                        owl:someValuesFrom pizza:Mild
+                                      ] ;
+                      owl:disjointWith pizza:OliveTopping ,
+                                       pizza:OnionTopping ,
+                                       pizza:PepperTopping ,
+                                       pizza:PetitPoisTopping ,
+                                       pizza:RocketTopping ,
+                                       pizza:SpinachTopping ,
+                                       pizza:TomatoTopping ;
+                      rdfs:label "CoberturaDeCogumelo"@pt .
+
+
+###  http://192.168.99.100/pizza/NamedPizza
+pizza:NamedPizza rdf:type owl:Class ;
+                 rdfs:subClassOf pizza:Pizza ;
+                 rdfs:comment "A pizza that can be found on a pizza menu"@en ;
+                 rdfs:label "PizzaComUmNome"@pt .
+
+
+###  http://192.168.99.100/pizza/Napoletana
+pizza:Napoletana rdf:type owl:Class ;
+                 rdfs:subClassOf pizza:NamedPizza ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty pizza:hasTopping ;
+                                   owl:someValuesFrom pizza:AnchoviesTopping
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty pizza:hasTopping ;
+                                   owl:someValuesFrom pizza:CaperTopping
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty pizza:hasTopping ;
+                                   owl:someValuesFrom pizza:MozzarellaTopping
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty pizza:hasTopping ;
+                                   owl:someValuesFrom pizza:OliveTopping
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty pizza:hasTopping ;
+                                   owl:someValuesFrom pizza:TomatoTopping
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty pizza:hasTopping ;
+                                   owl:allValuesFrom [ rdf:type owl:Class ;
+                                                       owl:unionOf ( pizza:AnchoviesTopping
+                                                                     pizza:CaperTopping
+                                                                     pizza:MozzarellaTopping
+                                                                     pizza:OliveTopping
+                                                                     pizza:TomatoTopping
+                                                                   )
+                                                     ]
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty pizza:hasCountryOfOrigin ;
+                                   owl:hasValue pizza:Italy
+                                 ] ;
+                 owl:disjointWith pizza:Parmense ,
+                                  pizza:PolloAdAstra ,
+                                  pizza:PrinceCarlo ,
+                                  pizza:QuattroFormaggi ,
+                                  pizza:Rosa ,
+                                  pizza:Siciliana ,
+                                  pizza:SloppyGiuseppe ,
+                                  pizza:Soho ,
+                                  pizza:UnclosedPizza ,
+                                  pizza:Veneziana ;
+                 rdfs:label "Napoletana"@pt .
+
+
+###  http://192.168.99.100/pizza/NonVegetarianPizza
+pizza:NonVegetarianPizza rdf:type owl:Class ;
+                         owl:equivalentClass [ owl:intersectionOf ( pizza:Pizza
+                                                                    [ rdf:type owl:Class ;
+                                                                      owl:complementOf pizza:VegetarianPizza
+                                                                    ]
+                                                                  ) ;
+                                               rdf:type owl:Class
+                                             ] ;
+                         owl:disjointWith pizza:VegetarianPizza ;
+                         rdfs:comment "Any Pizza that is not a VegetarianPizza"@en ;
+                         rdfs:label "PizzaNaoVegetariana"@pt .
+
+
+###  http://192.168.99.100/pizza/NutTopping
+pizza:NutTopping rdf:type owl:Class ;
+                 rdfs:subClassOf pizza:PizzaTopping ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty pizza:hasSpiciness ;
+                                   owl:someValuesFrom pizza:Mild
+                                 ] ;
+                 owl:disjointWith pizza:SauceTopping ,
+                                  pizza:VegetableTopping ;
+                 rdfs:label "CoberturaDeCastanha"@pt .
+
+
+###  http://192.168.99.100/pizza/OliveTopping
+pizza:OliveTopping rdf:type owl:Class ;
+                   rdfs:subClassOf pizza:VegetableTopping ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty pizza:hasSpiciness ;
+                                     owl:someValuesFrom pizza:Mild
+                                   ] ;
+                   owl:disjointWith pizza:OnionTopping ,
+                                    pizza:PepperTopping ,
+                                    pizza:PetitPoisTopping ,
+                                    pizza:RocketTopping ,
+                                    pizza:SpinachTopping ,
+                                    pizza:TomatoTopping ;
+                   rdfs:label "CoberturaDeAzeitona"@pt .
+
+
+###  http://192.168.99.100/pizza/OnionTopping
+pizza:OnionTopping rdf:type owl:Class ;
+                   rdfs:subClassOf pizza:VegetableTopping ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty pizza:hasSpiciness ;
+                                     owl:someValuesFrom pizza:Medium
+                                   ] ;
+                   owl:disjointWith pizza:PepperTopping ,
+                                    pizza:PetitPoisTopping ,
+                                    pizza:RocketTopping ,
+                                    pizza:SpinachTopping ,
+                                    pizza:TomatoTopping ;
+                   rdfs:label "CoberturaDeCebola"@pt .
+
+
+###  http://192.168.99.100/pizza/ParmaHamTopping
+pizza:ParmaHamTopping rdf:type owl:Class ;
+                      rdfs:subClassOf pizza:HamTopping ,
+                                      [ rdf:type owl:Restriction ;
+                                        owl:onProperty pizza:hasSpiciness ;
+                                        owl:someValuesFrom pizza:Mild
+                                      ] ;
+                      rdfs:label "CoberturaDePrezuntoParma"@pt .
+
+
+###  http://192.168.99.100/pizza/Parmense
+pizza:Parmense rdf:type owl:Class ;
+               rdfs:subClassOf pizza:NamedPizza ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty pizza:hasTopping ;
+                                 owl:someValuesFrom pizza:AsparagusTopping
+                               ] ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty pizza:hasTopping ;
+                                 owl:someValuesFrom pizza:HamTopping
+                               ] ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty pizza:hasTopping ;
+                                 owl:someValuesFrom pizza:MozzarellaTopping
+                               ] ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty pizza:hasTopping ;
+                                 owl:someValuesFrom pizza:ParmesanTopping
+                               ] ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty pizza:hasTopping ;
+                                 owl:someValuesFrom pizza:TomatoTopping
+                               ] ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty pizza:hasTopping ;
+                                 owl:allValuesFrom [ rdf:type owl:Class ;
+                                                     owl:unionOf ( pizza:AsparagusTopping
+                                                                   pizza:HamTopping
+                                                                   pizza:MozzarellaTopping
+                                                                   pizza:ParmesanTopping
+                                                                   pizza:TomatoTopping
+                                                                 )
+                                                   ]
+                               ] ;
+               owl:disjointWith pizza:PolloAdAstra ,
+                                pizza:PrinceCarlo ,
+                                pizza:QuattroFormaggi ,
+                                pizza:Rosa ,
+                                pizza:Siciliana ,
+                                pizza:SloppyGiuseppe ,
+                                pizza:Soho ,
+                                pizza:UnclosedPizza ,
+                                pizza:Veneziana ;
+               rdfs:label "Parmense"@pt .
+
+
+###  http://192.168.99.100/pizza/ParmesanTopping
+pizza:ParmesanTopping rdf:type owl:Class ;
+                      rdfs:subClassOf pizza:CheeseTopping ,
+                                      [ rdf:type owl:Restriction ;
+                                        owl:onProperty pizza:hasSpiciness ;
+                                        owl:someValuesFrom pizza:Mild
+                                      ] ;
+                      rdfs:label "CoberturaDeParmesao"@pt .
+
+
+###  http://192.168.99.100/pizza/PeperonataTopping
+pizza:PeperonataTopping rdf:type owl:Class ;
+                        rdfs:subClassOf pizza:PepperTopping ,
+                                        [ rdf:type owl:Restriction ;
+                                          owl:onProperty pizza:hasSpiciness ;
+                                          owl:someValuesFrom pizza:Medium
+                                        ] ;
+                        owl:disjointWith pizza:SweetPepperTopping ;
+                        rdfs:label "CoberturaPeperonata"@pt .
+
+
+###  http://192.168.99.100/pizza/PeperoniSausageTopping
+pizza:PeperoniSausageTopping rdf:type owl:Class ;
+                             rdfs:subClassOf pizza:MeatTopping ,
+                                             [ rdf:type owl:Restriction ;
+                                               owl:onProperty pizza:hasSpiciness ;
+                                               owl:someValuesFrom pizza:Medium
+                                             ] ;
+                             rdfs:label "CoberturaDeCalabreza"@pt .
+
+
+###  http://192.168.99.100/pizza/PepperTopping
+pizza:PepperTopping rdf:type owl:Class ;
+                    rdfs:subClassOf pizza:VegetableTopping ;
+                    owl:disjointWith pizza:PetitPoisTopping ,
+                                     pizza:RocketTopping ,
+                                     pizza:SpinachTopping ,
+                                     pizza:TomatoTopping ;
+                    rdfs:label "CoberturaDePimentao"@pt .
+
+
+###  http://192.168.99.100/pizza/PetitPoisTopping
+pizza:PetitPoisTopping rdf:type owl:Class ;
+                       rdfs:subClassOf pizza:VegetableTopping ,
+                                       [ rdf:type owl:Restriction ;
+                                         owl:onProperty pizza:hasSpiciness ;
+                                         owl:someValuesFrom pizza:Mild
+                                       ] ;
+                       owl:disjointWith pizza:RocketTopping ,
+                                        pizza:SpinachTopping ,
+                                        pizza:TomatoTopping ;
+                       rdfs:label "CoberturaPetitPois"@pt .
+
+
+###  http://192.168.99.100/pizza/PineKernels
+pizza:PineKernels rdf:type owl:Class ;
+                  rdfs:subClassOf pizza:NutTopping ;
+                  rdfs:label "CoberturaPineKernels"@pt .
+
+
+###  http://192.168.99.100/pizza/Pizza
+pizza:Pizza rdf:type owl:Class ;
+            rdfs:subClassOf pizza:Food ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty pizza:hasBase ;
+                              owl:someValuesFrom pizza:PizzaBase
+                            ] ;
+            owl:disjointWith pizza:PizzaBase ,
+                             pizza:PizzaTopping ;
+            rdfs:label "Pizza"@en .
+
+
+###  http://192.168.99.100/pizza/PizzaBase
+pizza:PizzaBase rdf:type owl:Class ;
+                rdfs:subClassOf pizza:Food ;
+                owl:disjointWith pizza:PizzaTopping ;
+                rdfs:label "BaseDaPizza"@pt .
+
+
+###  http://192.168.99.100/pizza/PizzaTopping
+pizza:PizzaTopping rdf:type owl:Class ;
+                   rdfs:subClassOf pizza:Food ;
+                   rdfs:label "CoberturaDaPizza"@pt .
+
+
+###  http://192.168.99.100/pizza/PolloAdAstra
+pizza:PolloAdAstra rdf:type owl:Class ;
+                   rdfs:subClassOf pizza:NamedPizza ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty pizza:hasTopping ;
+                                     owl:someValuesFrom pizza:CajunSpiceTopping
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty pizza:hasTopping ;
+                                     owl:someValuesFrom pizza:ChickenTopping
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty pizza:hasTopping ;
+                                     owl:someValuesFrom pizza:GarlicTopping
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty pizza:hasTopping ;
+                                     owl:someValuesFrom pizza:MozzarellaTopping
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty pizza:hasTopping ;
+                                     owl:someValuesFrom pizza:RedOnionTopping
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty pizza:hasTopping ;
+                                     owl:someValuesFrom pizza:SweetPepperTopping
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty pizza:hasTopping ;
+                                     owl:someValuesFrom pizza:TomatoTopping
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty pizza:hasTopping ;
+                                     owl:allValuesFrom [ rdf:type owl:Class ;
+                                                         owl:unionOf ( pizza:CajunSpiceTopping
+                                                                       pizza:ChickenTopping
+                                                                       pizza:GarlicTopping
+                                                                       pizza:MozzarellaTopping
+                                                                       pizza:RedOnionTopping
+                                                                       pizza:SweetPepperTopping
+                                                                       pizza:TomatoTopping
+                                                                     )
+                                                       ]
+                                   ] ;
+                   owl:disjointWith pizza:PrinceCarlo ,
+                                    pizza:QuattroFormaggi ,
+                                    pizza:Rosa ,
+                                    pizza:Siciliana ,
+                                    pizza:SloppyGiuseppe ,
+                                    pizza:Soho ,
+                                    pizza:UnclosedPizza ,
+                                    pizza:Veneziana ;
+                   rdfs:label "PolloAdAstra"@pt .
+
+
+###  http://192.168.99.100/pizza/PrawnsTopping
+pizza:PrawnsTopping rdf:type owl:Class ;
+                    rdfs:subClassOf pizza:FishTopping ;
+                    rdfs:label "CoberturaDeCamarao"@pt .
+
+
+###  http://192.168.99.100/pizza/PrinceCarlo
+pizza:PrinceCarlo rdf:type owl:Class ;
+                  rdfs:subClassOf pizza:NamedPizza ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:LeekTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:MozzarellaTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:ParmesanTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:RosemaryTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:someValuesFrom pizza:TomatoTopping
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty pizza:hasTopping ;
+                                    owl:allValuesFrom [ rdf:type owl:Class ;
+                                                        owl:unionOf ( pizza:LeekTopping
+                                                                      pizza:MozzarellaTopping
+                                                                      pizza:ParmesanTopping
+                                                                      pizza:RosemaryTopping
+                                                                      pizza:TomatoTopping
+                                                                    )
+                                                      ]
+                                  ] ;
+                  owl:disjointWith pizza:QuattroFormaggi ,
+                                   pizza:Rosa ,
+                                   pizza:Siciliana ,
+                                   pizza:SloppyGiuseppe ,
+                                   pizza:Soho ,
+                                   pizza:UnclosedPizza ,
+                                   pizza:Veneziana ;
+                  rdfs:label "CoberturaPrinceCarlo"@pt .
+
+
+###  http://192.168.99.100/pizza/QuattroFormaggi
+pizza:QuattroFormaggi rdf:type owl:Class ;
+                      rdfs:subClassOf pizza:NamedPizza ,
+                                      [ rdf:type owl:Restriction ;
+                                        owl:onProperty pizza:hasTopping ;
+                                        owl:someValuesFrom pizza:FourCheesesTopping
+                                      ] ,
+                                      [ rdf:type owl:Restriction ;
+                                        owl:onProperty pizza:hasTopping ;
+                                        owl:someValuesFrom pizza:TomatoTopping
+                                      ] ,
+                                      [ rdf:type owl:Restriction ;
+                                        owl:onProperty pizza:hasTopping ;
+                                        owl:allValuesFrom [ rdf:type owl:Class ;
+                                                            owl:unionOf ( pizza:FourCheesesTopping
+                                                                          pizza:TomatoTopping
+                                                                        )
+                                                          ]
+                                      ] ;
+                      owl:disjointWith pizza:Rosa ,
+                                       pizza:Siciliana ,
+                                       pizza:SloppyGiuseppe ,
+                                       pizza:Soho ,
+                                       pizza:UnclosedPizza ,
+                                       pizza:Veneziana ;
+                      rdfs:label "QuatroQueijos"@pt .
+
+
+###  http://192.168.99.100/pizza/RealItalianPizza
+pizza:RealItalianPizza rdf:type owl:Class ;
+                       owl:equivalentClass [ owl:intersectionOf ( pizza:Pizza
+                                                                  [ rdf:type owl:Restriction ;
+                                                                    owl:onProperty pizza:hasCountryOfOrigin ;
+                                                                    owl:hasValue pizza:Italy
+                                                                  ]
+                                                                ) ;
+                                             rdf:type owl:Class
+                                           ] ;
+                       rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                         owl:onProperty pizza:hasBase ;
+                                         owl:allValuesFrom pizza:ThinAndCrispyBase
+                                       ] ;
+                       rdfs:comment "This defined class has conditions that are part of the definition: ie any Pizza that has the country of origin, Italy is a RealItalianPizza. It also has conditions that merely describe the members - that all RealItalianPizzas must only have ThinAndCrispy bases. In essence, all pizzas from Italy must have ThinAndCrispy bases."@en ;
+                       rdfs:label "PizzaItalianaReal"@pt .
+
+
+###  http://192.168.99.100/pizza/RedOnionTopping
+pizza:RedOnionTopping rdf:type owl:Class ;
+                      rdfs:subClassOf pizza:OnionTopping ;
+                      rdfs:label "CoberturaDeCebolaVermelha"@pt .
+
+
+###  http://192.168.99.100/pizza/RocketTopping
+pizza:RocketTopping rdf:type owl:Class ;
+                    rdfs:subClassOf pizza:VegetableTopping ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty pizza:hasSpiciness ;
+                                      owl:someValuesFrom pizza:Medium
+                                    ] ;
+                    owl:disjointWith pizza:SpinachTopping ,
+                                     pizza:TomatoTopping ;
+                    rdfs:label "CoberturaRocket"@pt .
+
+
+###  http://192.168.99.100/pizza/Rosa
+pizza:Rosa rdf:type owl:Class ;
+           rdfs:subClassOf pizza:NamedPizza ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty pizza:hasTopping ;
+                             owl:someValuesFrom pizza:GorgonzolaTopping
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty pizza:hasTopping ;
+                             owl:someValuesFrom pizza:MozzarellaTopping
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty pizza:hasTopping ;
+                             owl:someValuesFrom pizza:TomatoTopping
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty pizza:hasTopping ;
+                             owl:allValuesFrom [ rdf:type owl:Class ;
+                                                 owl:unionOf ( pizza:GorgonzolaTopping
+                                                               pizza:MozzarellaTopping
+                                                               pizza:TomatoTopping
+                                                             )
+                                               ]
+                           ] ;
+           owl:disjointWith pizza:Siciliana ,
+                            pizza:SloppyGiuseppe ,
+                            pizza:Soho ,
+                            pizza:UnclosedPizza ,
+                            pizza:Veneziana ;
+           rdfs:label "Rosa"@pt .
+
+
+###  http://192.168.99.100/pizza/RosemaryTopping
+pizza:RosemaryTopping rdf:type owl:Class ;
+                      rdfs:subClassOf pizza:HerbSpiceTopping ,
+                                      [ rdf:type owl:Restriction ;
+                                        owl:onProperty pizza:hasSpiciness ;
+                                        owl:someValuesFrom pizza:Mild
+                                      ] ;
+                      rdfs:label "CoberturaRosemary"@pt .
+
+
+###  http://192.168.99.100/pizza/SauceTopping
+pizza:SauceTopping rdf:type owl:Class ;
+                   rdfs:subClassOf pizza:PizzaTopping ;
+                   owl:disjointWith pizza:VegetableTopping ;
+                   rdfs:label "CoberturaEmMolho"@pt .
+
+
+###  http://192.168.99.100/pizza/Siciliana
+pizza:Siciliana rdf:type owl:Class ;
+                rdfs:subClassOf pizza:NamedPizza ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty pizza:hasTopping ;
+                                  owl:someValuesFrom pizza:AnchoviesTopping
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty pizza:hasTopping ;
+                                  owl:someValuesFrom pizza:ArtichokeTopping
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty pizza:hasTopping ;
+                                  owl:someValuesFrom pizza:GarlicTopping
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty pizza:hasTopping ;
+                                  owl:someValuesFrom pizza:HamTopping
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty pizza:hasTopping ;
+                                  owl:someValuesFrom pizza:MozzarellaTopping
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty pizza:hasTopping ;
+                                  owl:someValuesFrom pizza:OliveTopping
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty pizza:hasTopping ;
+                                  owl:someValuesFrom pizza:TomatoTopping
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty pizza:hasTopping ;
+                                  owl:allValuesFrom [ rdf:type owl:Class ;
+                                                      owl:unionOf ( pizza:AnchoviesTopping
+                                                                    pizza:ArtichokeTopping
+                                                                    pizza:GarlicTopping
+                                                                    pizza:HamTopping
+                                                                    pizza:MozzarellaTopping
+                                                                    pizza:OliveTopping
+                                                                    pizza:TomatoTopping
+                                                                  )
+                                                    ]
+                                ] ;
+                owl:disjointWith pizza:SloppyGiuseppe ,
+                                 pizza:Soho ,
+                                 pizza:UnclosedPizza ,
+                                 pizza:Veneziana ;
+                rdfs:label "Siciliana"@pt .
+
+
+###  http://192.168.99.100/pizza/SlicedTomatoTopping
+pizza:SlicedTomatoTopping rdf:type owl:Class ;
+                          rdfs:subClassOf pizza:TomatoTopping ,
+                                          [ rdf:type owl:Restriction ;
+                                            owl:onProperty pizza:hasSpiciness ;
+                                            owl:someValuesFrom pizza:Mild
+                                          ] ;
+                          owl:disjointWith pizza:SundriedTomatoTopping ;
+                          rdfs:label "CoberturaDeTomateFatiado"@pt .
+
+
+###  http://192.168.99.100/pizza/SloppyGiuseppe
+pizza:SloppyGiuseppe rdf:type owl:Class ;
+                     rdfs:subClassOf pizza:NamedPizza ,
+                                     [ rdf:type owl:Restriction ;
+                                       owl:onProperty pizza:hasTopping ;
+                                       owl:someValuesFrom pizza:GreenPepperTopping
+                                     ] ,
+                                     [ rdf:type owl:Restriction ;
+                                       owl:onProperty pizza:hasTopping ;
+                                       owl:someValuesFrom pizza:HotSpicedBeefTopping
+                                     ] ,
+                                     [ rdf:type owl:Restriction ;
+                                       owl:onProperty pizza:hasTopping ;
+                                       owl:someValuesFrom pizza:MozzarellaTopping
+                                     ] ,
+                                     [ rdf:type owl:Restriction ;
+                                       owl:onProperty pizza:hasTopping ;
+                                       owl:someValuesFrom pizza:OnionTopping
+                                     ] ,
+                                     [ rdf:type owl:Restriction ;
+                                       owl:onProperty pizza:hasTopping ;
+                                       owl:someValuesFrom pizza:TomatoTopping
+                                     ] ,
+                                     [ rdf:type owl:Restriction ;
+                                       owl:onProperty pizza:hasTopping ;
+                                       owl:allValuesFrom [ rdf:type owl:Class ;
+                                                           owl:unionOf ( pizza:GreenPepperTopping
+                                                                         pizza:HotSpicedBeefTopping
+                                                                         pizza:MozzarellaTopping
+                                                                         pizza:OnionTopping
+                                                                         pizza:TomatoTopping
+                                                                       )
+                                                         ]
+                                     ] ;
+                     owl:disjointWith pizza:Soho ,
+                                      pizza:UnclosedPizza ,
+                                      pizza:Veneziana ;
+                     rdfs:label "SloppyGiuseppe"@pt .
+
+
+###  http://192.168.99.100/pizza/Soho
+pizza:Soho rdf:type owl:Class ;
+           rdfs:subClassOf pizza:NamedPizza ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty pizza:hasTopping ;
+                             owl:someValuesFrom pizza:GarlicTopping
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty pizza:hasTopping ;
+                             owl:someValuesFrom pizza:MozzarellaTopping
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty pizza:hasTopping ;
+                             owl:someValuesFrom pizza:OliveTopping
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty pizza:hasTopping ;
+                             owl:someValuesFrom pizza:ParmesanTopping
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty pizza:hasTopping ;
+                             owl:someValuesFrom pizza:RocketTopping
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty pizza:hasTopping ;
+                             owl:someValuesFrom pizza:TomatoTopping
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty pizza:hasTopping ;
+                             owl:allValuesFrom [ rdf:type owl:Class ;
+                                                 owl:unionOf ( pizza:GarlicTopping
+                                                               pizza:MozzarellaTopping
+                                                               pizza:OliveTopping
+                                                               pizza:ParmesanTopping
+                                                               pizza:RocketTopping
+                                                               pizza:TomatoTopping
+                                                             )
+                                               ]
+                           ] ;
+           owl:disjointWith pizza:UnclosedPizza ,
+                            pizza:Veneziana ;
+           rdfs:label "Soho"@pt .
+
+
+###  http://192.168.99.100/pizza/Spiciness
+pizza:Spiciness rdf:type owl:Class ;
+                owl:equivalentClass [ rdf:type owl:Class ;
+                                      owl:unionOf ( pizza:Hot
+                                                    pizza:Medium
+                                                    pizza:Mild
+                                                  )
+                                    ] ;
+                rdfs:subClassOf pizza:ValuePartition ;
+                rdfs:comment "A ValuePartition that describes only values from Hot, Medium or Mild. NB Subclasses can themselves be divided up into further partitions."@en ;
+                rdfs:label "Tempero"@pt .
+
+
+###  http://192.168.99.100/pizza/SpicyPizza
+pizza:SpicyPizza rdf:type owl:Class ;
+                 owl:equivalentClass [ owl:intersectionOf ( pizza:Pizza
+                                                            [ rdf:type owl:Restriction ;
+                                                              owl:onProperty pizza:hasTopping ;
+                                                              owl:someValuesFrom pizza:SpicyTopping
+                                                            ]
+                                                          ) ;
+                                       rdf:type owl:Class
+                                     ] ;
+                 rdfs:comment "Any pizza that has a spicy topping is a SpicyPizza"@en ;
+                 rdfs:label "PizzaTemperada"@pt .
+
+
+###  http://192.168.99.100/pizza/SpicyPizzaEquivalent
+pizza:SpicyPizzaEquivalent rdf:type owl:Class ;
+                           owl:equivalentClass [ owl:intersectionOf ( pizza:Pizza
+                                                                      [ rdf:type owl:Restriction ;
+                                                                        owl:onProperty pizza:hasTopping ;
+                                                                        owl:someValuesFrom [ owl:intersectionOf ( pizza:PizzaTopping
+                                                                                                                  [ rdf:type owl:Restriction ;
+                                                                                                                    owl:onProperty pizza:hasSpiciness ;
+                                                                                                                    owl:someValuesFrom pizza:Hot
+                                                                                                                  ]
+                                                                                                                ) ;
+                                                                                             rdf:type owl:Class
+                                                                                           ]
+                                                                      ]
+                                                                    ) ;
+                                                 rdf:type owl:Class
+                                               ] ;
+                           rdfs:comment "An alternative definition for the SpicyPizza which does away with needing a definition of SpicyTopping and uses a slightly more complicated restriction: Pizzas that have at least one topping that is both a PizzaTopping and has spiciness hot are members of this class."@en ;
+                           rdfs:label "PizzaTemperadaEquivalente"@pt .
+
+
+###  http://192.168.99.100/pizza/SpicyTopping
+pizza:SpicyTopping rdf:type owl:Class ;
+                   owl:equivalentClass [ owl:intersectionOf ( pizza:PizzaTopping
+                                                              [ rdf:type owl:Restriction ;
+                                                                owl:onProperty pizza:hasSpiciness ;
+                                                                owl:someValuesFrom pizza:Hot
+                                                              ]
+                                                            ) ;
+                                         rdf:type owl:Class
+                                       ] ;
+                   rdfs:comment "Any pizza topping that has spiciness Hot"@en ;
+                   rdfs:label "CoberturaTemperada"@pt .
+
+
+###  http://192.168.99.100/pizza/SpinachTopping
+pizza:SpinachTopping rdf:type owl:Class ;
+                     rdfs:subClassOf pizza:VegetableTopping ,
+                                     [ rdf:type owl:Restriction ;
+                                       owl:onProperty pizza:hasSpiciness ;
+                                       owl:someValuesFrom pizza:Mild
+                                     ] ;
+                     owl:disjointWith pizza:TomatoTopping ;
+                     rdfs:label "CoberturaDeEspinafre"@pt .
+
+
+###  http://192.168.99.100/pizza/SultanaTopping
+pizza:SultanaTopping rdf:type owl:Class ;
+                     rdfs:subClassOf pizza:FruitTopping ,
+                                     [ rdf:type owl:Restriction ;
+                                       owl:onProperty pizza:hasSpiciness ;
+                                       owl:someValuesFrom pizza:Medium
+                                     ] ;
+                     rdfs:label "CoberturaSultana"@pt .
+
+
+###  http://192.168.99.100/pizza/SundriedTomatoTopping
+pizza:SundriedTomatoTopping rdf:type owl:Class ;
+                            rdfs:subClassOf pizza:TomatoTopping ,
+                                            [ rdf:type owl:Restriction ;
+                                              owl:onProperty pizza:hasSpiciness ;
+                                              owl:someValuesFrom pizza:Mild
+                                            ] ;
+                            rdfs:label "CoberturaDeTomateRessecadoAoSol"@pt .
+
+
+###  http://192.168.99.100/pizza/SweetPepperTopping
+pizza:SweetPepperTopping rdf:type owl:Class ;
+                         rdfs:subClassOf pizza:PepperTopping ,
+                                         [ rdf:type owl:Restriction ;
+                                           owl:onProperty pizza:hasSpiciness ;
+                                           owl:someValuesFrom pizza:Mild
+                                         ] ;
+                         rdfs:label "CoberturaDePimentaoDoce"@pt .
+
+
+###  http://192.168.99.100/pizza/ThinAndCrispyBase
+pizza:ThinAndCrispyBase rdf:type owl:Class ;
+                        rdfs:subClassOf pizza:PizzaBase ;
+                        rdfs:label "BaseFinaEQuebradica"@pt .
+
+
+###  http://192.168.99.100/pizza/ThinAndCrispyPizza
+pizza:ThinAndCrispyPizza rdf:type owl:Class ;
+                         owl:equivalentClass [ owl:intersectionOf ( pizza:Pizza
+                                                                    [ rdf:type owl:Restriction ;
+                                                                      owl:onProperty pizza:hasBase ;
+                                                                      owl:allValuesFrom pizza:ThinAndCrispyBase
+                                                                    ]
+                                                                  ) ;
+                                               rdf:type owl:Class
+                                             ] .
+
+
+###  http://192.168.99.100/pizza/TobascoPepperSauce
+pizza:TobascoPepperSauce rdf:type owl:Class ;
+                         rdfs:subClassOf pizza:SauceTopping ,
+                                         [ rdf:type owl:Restriction ;
+                                           owl:onProperty pizza:hasSpiciness ;
+                                           owl:someValuesFrom pizza:Hot
+                                         ] ;
+                         rdfs:label "MolhoTobascoPepper"@pt .
+
+
+###  http://192.168.99.100/pizza/TomatoTopping
+pizza:TomatoTopping rdf:type owl:Class ;
+                    rdfs:subClassOf pizza:VegetableTopping ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty pizza:hasSpiciness ;
+                                      owl:someValuesFrom pizza:Mild
+                                    ] ;
+                    rdfs:label "CoberturaDeTomate"@pt .
+
+
+###  http://192.168.99.100/pizza/UnclosedPizza
+pizza:UnclosedPizza rdf:type owl:Class ;
+                    rdfs:subClassOf pizza:NamedPizza ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty pizza:hasTopping ;
+                                      owl:someValuesFrom pizza:MozzarellaTopping
+                                    ] ;
+                    owl:disjointWith pizza:Veneziana ;
+                    rdfs:comment "An unclosed Pizza cannot be inferred to be either a VegetarianPizza or a NonVegetarianPizza, because it might have other toppings."^^xsd:string ;
+                    rdfs:label "PizzaAberta"@pt .
+
+
+###  http://192.168.99.100/pizza/ValuePartition
+pizza:ValuePartition rdf:type owl:Class ;
+                     rdfs:comment "A ValuePartition is a pattern that describes a restricted set of classes from which a property can be associated. The parent class is used in restrictions, and the covering axiom means that only members of the subclasses may be used as values. The possible subclasses cannot be extended without updating the ValuePartition class."^^xsd:string ;
+                     rdfs:label "ValorDaParticao"@pt .
+
+
+###  http://192.168.99.100/pizza/VegetableTopping
+pizza:VegetableTopping rdf:type owl:Class ;
+                       rdfs:subClassOf pizza:PizzaTopping ;
+                       rdfs:label "CoberturaDeVegetais"@pt .
+
+
+###  http://192.168.99.100/pizza/VegetarianPizza
+pizza:VegetarianPizza rdf:type owl:Class ;
+                      owl:equivalentClass [ owl:intersectionOf ( pizza:Pizza
+                                                                 [ rdf:type owl:Class ;
+                                                                   owl:complementOf [ rdf:type owl:Restriction ;
+                                                                                      owl:onProperty pizza:hasTopping ;
+                                                                                      owl:someValuesFrom pizza:FishTopping
+                                                                                    ]
+                                                                 ]
+                                                                 [ rdf:type owl:Class ;
+                                                                   owl:complementOf [ rdf:type owl:Restriction ;
+                                                                                      owl:onProperty pizza:hasTopping ;
+                                                                                      owl:someValuesFrom pizza:MeatTopping
+                                                                                    ]
+                                                                 ]
+                                                               ) ;
+                                            rdf:type owl:Class
+                                          ] ;
+                      rdfs:comment "Any pizza that does not have fish topping and does not have meat topping is a VegetarianPizza. Members of this class do not need to have any toppings at all."@en ;
+                      rdfs:label "PizzaVegetariana"@pt .
+
+
+###  http://192.168.99.100/pizza/VegetarianPizzaEquivalent1
+pizza:VegetarianPizzaEquivalent1 rdf:type owl:Class ;
+                                 owl:equivalentClass [ owl:intersectionOf ( pizza:Pizza
+                                                                            [ rdf:type owl:Restriction ;
+                                                                              owl:onProperty pizza:hasTopping ;
+                                                                              owl:allValuesFrom pizza:VegetarianTopping
+                                                                            ]
+                                                                          ) ;
+                                                       rdf:type owl:Class
+                                                     ] ;
+                                 rdfs:comment "Any pizza that only has vegetarian toppings or no toppings is a VegetarianPizzaEquiv1. Should be inferred to be equivalent to VegetarianPizzaEquiv2.  Not equivalent to VegetarianPizza because PizzaTopping is not covering"@en ;
+                                 rdfs:label "PizzaVegetarianaEquivalente1"@pt .
+
+
+###  http://192.168.99.100/pizza/VegetarianPizzaEquivalent2
+pizza:VegetarianPizzaEquivalent2 rdf:type owl:Class ;
+                                 owl:equivalentClass [ owl:intersectionOf ( pizza:Pizza
+                                                                            [ rdf:type owl:Restriction ;
+                                                                              owl:onProperty pizza:hasTopping ;
+                                                                              owl:allValuesFrom [ rdf:type owl:Class ;
+                                                                                                  owl:unionOf ( pizza:CheeseTopping
+                                                                                                                pizza:FruitTopping
+                                                                                                                pizza:HerbSpiceTopping
+                                                                                                                pizza:NutTopping
+                                                                                                                pizza:SauceTopping
+                                                                                                                pizza:VegetableTopping
+                                                                                                              )
+                                                                                                ]
+                                                                            ]
+                                                                          ) ;
+                                                       rdf:type owl:Class
+                                                     ] ;
+                                 rdfs:comment "An alternative to VegetarianPizzaEquiv1 that does not require a definition of VegetarianTopping. Perhaps more difficult to maintain. Not equivalent to VegetarianPizza"@en ;
+                                 rdfs:label "PizzaVegetarianaEquivalente2"@pt .
+
+
+###  http://192.168.99.100/pizza/VegetarianTopping
+pizza:VegetarianTopping rdf:type owl:Class ;
+                        owl:equivalentClass [ owl:intersectionOf ( pizza:PizzaTopping
+                                                                   [ rdf:type owl:Class ;
+                                                                     owl:unionOf ( pizza:CheeseTopping
+                                                                                   pizza:FruitTopping
+                                                                                   pizza:HerbSpiceTopping
+                                                                                   pizza:NutTopping
+                                                                                   pizza:SauceTopping
+                                                                                   pizza:VegetableTopping
+                                                                                 )
+                                                                   ]
+                                                                 ) ;
+                                              rdf:type owl:Class
+                                            ] ;
+                        rdfs:comment "An example of a covering axiom. VegetarianTopping is equivalent to the union of all toppings in the given axiom. VegetarianToppings can only be Cheese or Vegetable or....etc."@en ;
+                        rdfs:label "CoberturaVegetariana"@pt .
+
+
+###  http://192.168.99.100/pizza/Veneziana
+pizza:Veneziana rdf:type owl:Class ;
+                rdfs:subClassOf pizza:NamedPizza ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty pizza:hasTopping ;
+                                  owl:someValuesFrom pizza:CaperTopping
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty pizza:hasTopping ;
+                                  owl:someValuesFrom pizza:MozzarellaTopping
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty pizza:hasTopping ;
+                                  owl:someValuesFrom pizza:OliveTopping
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty pizza:hasTopping ;
+                                  owl:someValuesFrom pizza:OnionTopping
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty pizza:hasTopping ;
+                                  owl:someValuesFrom pizza:PineKernels
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty pizza:hasTopping ;
+                                  owl:someValuesFrom pizza:SultanaTopping
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty pizza:hasTopping ;
+                                  owl:someValuesFrom pizza:TomatoTopping
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty pizza:hasTopping ;
+                                  owl:allValuesFrom [ rdf:type owl:Class ;
+                                                      owl:unionOf ( pizza:CaperTopping
+                                                                    pizza:MozzarellaTopping
+                                                                    pizza:OliveTopping
+                                                                    pizza:OnionTopping
+                                                                    pizza:PineKernels
+                                                                    pizza:SultanaTopping
+                                                                    pizza:TomatoTopping
+                                                                  )
+                                                    ]
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty pizza:hasCountryOfOrigin ;
+                                  owl:hasValue pizza:Italy
+                                ] ;
+                rdfs:label "Veneziana"@pt .
+
+
+###  http://www.w3.org/2002/07/owl#Thing
+owl:Thing rdf:type owl:Class .
+
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  http://192.168.99.100/pizza/America
+pizza:America rdf:type owl:NamedIndividual ,
+                       pizza:Country ,
+                       owl:Thing .
+
+
+###  http://192.168.99.100/pizza/England
+pizza:England rdf:type owl:NamedIndividual ,
+                       pizza:Country ,
+                       owl:Thing .
+
+
+###  http://192.168.99.100/pizza/France
+pizza:France rdf:type owl:NamedIndividual ,
+                      pizza:Country ,
+                      owl:Thing .
+
+
+###  http://192.168.99.100/pizza/Germany
+pizza:Germany rdf:type owl:NamedIndividual ,
+                       pizza:Country ,
+                       owl:Thing .
+
+
+###  http://192.168.99.100/pizza/Italy
+pizza:Italy rdf:type owl:NamedIndividual ,
+                     pizza:Country ,
+                     owl:Thing .
+
+
+#################################################################
+#    General axioms
+#################################################################
+
+[ rdf:type owl:AllDifferent ;
+  owl:distinctMembers ( pizza:America
+                        pizza:England
+                        pizza:France
+                        pizza:Germany
+                        pizza:Italy
+                      )
+] .
+
+
+###  Generated by the OWL API (version 4.2.6.20160910-2108) https://github.com/owlcs/owlapi
+
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+
+<http://192.168.99.100/pizza/0-Margherita> a <http://192.168.99.100/pizza/Pizza> ;
+	<http://192.168.99.100/pizza/hasCountryOfOrigin> <http://192.168.99.100/pizza/Italy> ;
+	<http://192.168.99.100/pizza/hasSpiciness> <http://192.168.99.100/pizza/0_flauw> ;
+	<http://192.168.99.100/pizza/hasTopping> <http://192.168.99.100/pizza/0-Tomaat> , <http://192.168.99.100/pizza/0-mozzarella> ;
+	<http://192.168.99.100/pizza/hasBase> <http://192.168.99.100/pizza/0_base> .
+
+<http://192.168.99.100/pizza/0-Tomaat> a <http://192.168.99.100/pizza/TomatoTopping> .
+
+<http://192.168.99.100/pizza/0-mozzarella> a <http://192.168.99.100/pizza/MozzarellaTopping> .
+
+<http://192.168.99.100/pizza/0_flauw> a <http://192.168.99.100/pizza/Mild> .
+
+<http://192.168.99.100/pizza/0_base> a <http://192.168.99.100/pizza/ThinAndCrispyBase> .
+
+<http://192.168.99.100/pizza/1-Americana> a <http://192.168.99.100/pizza/Pizza> ;
+	<http://192.168.99.100/pizza/hasCountryOfOrigin> <http://192.168.99.100/pizza/Italy> ;
+	<http://192.168.99.100/pizza/hasSpiciness> <http://192.168.99.100/pizza/1_pikant> ;
+	<http://192.168.99.100/pizza/hasTopping> <http://192.168.99.100/pizza/1-Tomaat> , <http://192.168.99.100/pizza/1-mozzarella> , <http://192.168.99.100/pizza/1-salami> ;
+	<http://192.168.99.100/pizza/hasBase> <http://192.168.99.100/pizza/1_base> .
+
+<http://192.168.99.100/pizza/1-Tomaat> a <http://192.168.99.100/pizza/TomatoTopping> .
+
+<http://192.168.99.100/pizza/1-mozzarella> a <http://192.168.99.100/pizza/MozzarellaTopping> .
+
+<http://192.168.99.100/pizza/1-salami> a <http://192.168.99.100/pizza/PeperoniSausageTopping> .
+
+<http://192.168.99.100/pizza/1_pikant> a <http://192.168.99.100/pizza/Hot> .
+
+<http://192.168.99.100/pizza/1_base> a <http://192.168.99.100/pizza/ThinAndCrispyBase> .
+
+<http://192.168.99.100/pizza/2-Gondoliera> a <http://192.168.99.100/pizza/Pizza> ;
+	<http://192.168.99.100/pizza/hasCountryOfOrigin> <http://192.168.99.100/pizza/Italy> ;
+	<http://192.168.99.100/pizza/hasSpiciness> <http://192.168.99.100/pizza/2_flauw> ;
+	<http://192.168.99.100/pizza/hasTopping> <http://192.168.99.100/pizza/2-Tomaat> , <http://192.168.99.100/pizza/2-mozzarella> , <http://192.168.99.100/pizza/2-ham> ;
+	<http://192.168.99.100/pizza/hasBase> <http://192.168.99.100/pizza/2_base> .
+
+<http://192.168.99.100/pizza/2-Tomaat> a <http://192.168.99.100/pizza/TomatoTopping> .
+
+<http://192.168.99.100/pizza/2-mozzarella> a <http://192.168.99.100/pizza/MozzarellaTopping> .
+
+<http://192.168.99.100/pizza/2-ham> a <http://192.168.99.100/pizza/HamTopping> .
+
+<http://192.168.99.100/pizza/2_flauw> a <http://192.168.99.100/pizza/Mild> .
+
+<http://192.168.99.100/pizza/2_base> a <http://192.168.99.100/pizza/ThinAndCrispyBase> .
+
+<http://192.168.99.100/pizza/3-Capricciosa> a <http://192.168.99.100/pizza/Pizza> ;
+	<http://192.168.99.100/pizza/hasCountryOfOrigin> <http://192.168.99.100/pizza/Italy> ;
+	<http://192.168.99.100/pizza/hasSpiciness> <http://192.168.99.100/pizza/3_normaal> ;
+	<http://192.168.99.100/pizza/hasTopping> <http://192.168.99.100/pizza/3-Tomaat> , <http://192.168.99.100/pizza/3-mozzarella> , <http://192.168.99.100/pizza/3-champignons> ;
+	<http://192.168.99.100/pizza/hasBase> <http://192.168.99.100/pizza/3_base> .
+
+<http://192.168.99.100/pizza/3-Tomaat> a <http://192.168.99.100/pizza/TomatoTopping> .
+
+<http://192.168.99.100/pizza/3-mozzarella> a <http://192.168.99.100/pizza/MozzarellaTopping> .
+
+<http://192.168.99.100/pizza/3-champignons> a <http://192.168.99.100/pizza/MushroomTopping> .
+
+<http://192.168.99.100/pizza/3_normaal> a <http://192.168.99.100/pizza/Medium> .
+
+<http://192.168.99.100/pizza/3_base> a <http://192.168.99.100/pizza/ThinAndCrispyBase> .
+
+<http://192.168.99.100/pizza/4-Napoletana> a <http://192.168.99.100/pizza/Pizza> ;
+	<http://192.168.99.100/pizza/hasCountryOfOrigin> <http://192.168.99.100/pizza/Italy> ;
+	<http://192.168.99.100/pizza/hasSpiciness> <http://192.168.99.100/pizza/4_pikant> ;
+	<http://192.168.99.100/pizza/hasTopping> <http://192.168.99.100/pizza/4-Tomaat> , <http://192.168.99.100/pizza/4-mozzarella> , <http://192.168.99.100/pizza/4-ansjovis> ;
+	<http://192.168.99.100/pizza/hasBase> <http://192.168.99.100/pizza/4_base> .
+
+<http://192.168.99.100/pizza/4-Tomaat> a <http://192.168.99.100/pizza/TomatoTopping> .
+
+<http://192.168.99.100/pizza/4-mozzarella> a <http://192.168.99.100/pizza/MozzarellaTopping> .
+
+<http://192.168.99.100/pizza/4-ansjovis> a <http://192.168.99.100/pizza/AnchoviesTopping> .
+
+<http://192.168.99.100/pizza/4_pikant> a <http://192.168.99.100/pizza/Hot> .
+
+<http://192.168.99.100/pizza/4_base> a <http://192.168.99.100/pizza/ThinAndCrispyBase> .
+
+<http://192.168.99.100/pizza/5-Spinaci> a <http://192.168.99.100/pizza/Pizza> ;
+	<http://192.168.99.100/pizza/hasCountryOfOrigin> <http://192.168.99.100/pizza/Italy> ;
+	<http://192.168.99.100/pizza/hasSpiciness> <http://192.168.99.100/pizza/5_flauw> ;
+	<http://192.168.99.100/pizza/hasTopping> <http://192.168.99.100/pizza/5-Tomaat> , <http://192.168.99.100/pizza/5-mozzarella> , <http://192.168.99.100/pizza/5-spinazie> ;
+	<http://192.168.99.100/pizza/hasBase> <http://192.168.99.100/pizza/5_base> .
+
+<http://192.168.99.100/pizza/5-Tomaat> a <http://192.168.99.100/pizza/TomatoTopping> .
+
+<http://192.168.99.100/pizza/5-mozzarella> a <http://192.168.99.100/pizza/MozzarellaTopping> .
+
+<http://192.168.99.100/pizza/5-spinazie> a <http://192.168.99.100/pizza/SpinachTopping> .
+
+<http://192.168.99.100/pizza/5_flauw> a <http://192.168.99.100/pizza/Mild> .
+
+<http://192.168.99.100/pizza/5_base> a <http://192.168.99.100/pizza/ThinAndCrispyBase> .
+
+<http://192.168.99.100/pizza/6-Tropicana> a <http://192.168.99.100/pizza/Pizza> ;
+	<http://192.168.99.100/pizza/hasCountryOfOrigin> <http://192.168.99.100/pizza/Italy> ;
+	<http://192.168.99.100/pizza/hasSpiciness> <http://192.168.99.100/pizza/6_flauw> ;
+	<http://192.168.99.100/pizza/hasTopping> <http://192.168.99.100/pizza/6-Tomaat> , <http://192.168.99.100/pizza/6-mozzarella> , <http://192.168.99.100/pizza/6-ham> , <http://192.168.99.100/pizza/6-ananas> ;
+	<http://192.168.99.100/pizza/hasBase> <http://192.168.99.100/pizza/6_base> .
+
+<http://192.168.99.100/pizza/6-Tomaat> a <http://192.168.99.100/pizza/TomatoTopping> .
+
+<http://192.168.99.100/pizza/6-mozzarella> a <http://192.168.99.100/pizza/MozzarellaTopping> .
+
+<http://192.168.99.100/pizza/6-ham> a <http://192.168.99.100/pizza/HamTopping> .
+
+<http://192.168.99.100/pizza/6-ananas> a <http://192.168.99.100/pizza/PineKernels> .
+
+<http://192.168.99.100/pizza/6_flauw> a <http://192.168.99.100/pizza/Mild> .
+
+<http://192.168.99.100/pizza/6_base> a <http://192.168.99.100/pizza/ThinAndCrispyBase> .
+
+<http://192.168.99.100/pizza/7-Vulcano> a <http://192.168.99.100/pizza/Pizza> ;
+	<http://192.168.99.100/pizza/hasCountryOfOrigin> <http://192.168.99.100/pizza/Italy> ;
+	<http://192.168.99.100/pizza/hasSpiciness> <http://192.168.99.100/pizza/7_pikant> ;
+	<http://192.168.99.100/pizza/hasTopping> <http://192.168.99.100/pizza/7-Tomaat> , <http://192.168.99.100/pizza/7-mozzarella> , <http://192.168.99.100/pizza/7-paprika> , <http://192.168.99.100/pizza/7-uien> , <http://192.168.99.100/pizza/7-pepers> ;
+	<http://192.168.99.100/pizza/hasBase> <http://192.168.99.100/pizza/7_base> .
+
+<http://192.168.99.100/pizza/7-Tomaat> a <http://192.168.99.100/pizza/TomatoTopping> .
+
+<http://192.168.99.100/pizza/7-mozzarella> a <http://192.168.99.100/pizza/MozzarellaTopping> .
+
+<http://192.168.99.100/pizza/7-paprika> a <http://192.168.99.100/pizza/SweetPepperTopping> .
+
+<http://192.168.99.100/pizza/7-uien> a <http://192.168.99.100/pizza/OnionTopping> .
+
+<http://192.168.99.100/pizza/7-pepers> a <http://192.168.99.100/pizza/PepperTopping> .
+
+<http://192.168.99.100/pizza/7_pikant> a <http://192.168.99.100/pizza/Hot> .
+
+<http://192.168.99.100/pizza/7_base> a <http://192.168.99.100/pizza/ThinAndCrispyBase> .
+
+<http://192.168.99.100/pizza/8-Fantasia> <http://192.168.99.100/pizza/hasTopping> <http://192.168.99.100/pizza/8-paprika> , <http://192.168.99.100/pizza/8-prei> , <http://192.168.99.100/pizza/8-olijven> ;
+	a <http://192.168.99.100/pizza/Pizza> ;
+	<http://192.168.99.100/pizza/hasCountryOfOrigin> <http://192.168.99.100/pizza/Italy> ;
+	<http://192.168.99.100/pizza/hasSpiciness> <http://192.168.99.100/pizza/8_normaal> ;
+	<http://192.168.99.100/pizza/hasTopping> <http://192.168.99.100/pizza/8-Tomaat> , <http://192.168.99.100/pizza/8-mozzarella> , <http://192.168.99.100/pizza/8-champignons> ;
+	<http://192.168.99.100/pizza/hasBase> <http://192.168.99.100/pizza/8_base> .
+
+<http://192.168.99.100/pizza/8-Tomaat> a <http://192.168.99.100/pizza/TomatoTopping> .
+
+<http://192.168.99.100/pizza/8-mozzarella> a <http://192.168.99.100/pizza/MozzarellaTopping> .
+
+<http://192.168.99.100/pizza/8-champignons> a <http://192.168.99.100/pizza/MushroomTopping> .
+
+<http://192.168.99.100/pizza/8-paprika> a <http://192.168.99.100/pizza/SweetPepperTopping> .
+
+<http://192.168.99.100/pizza/8-prei> a <http://192.168.99.100/pizza/LeekTopping> .
+
+<http://192.168.99.100/pizza/8-olijven> a <http://192.168.99.100/pizza/OliveTopping> .
+
+<http://192.168.99.100/pizza/8_normaal> a <http://192.168.99.100/pizza/Medium> .
+
+<http://192.168.99.100/pizza/8_base> a <http://192.168.99.100/pizza/ThinAndCrispyBase> .
+
+<http://192.168.99.100/pizza/9-Gorgonzola> a <http://192.168.99.100/pizza/Pizza> ;
+	<http://192.168.99.100/pizza/hasCountryOfOrigin> <http://192.168.99.100/pizza/Italy> ;
+	<http://192.168.99.100/pizza/hasSpiciness> <http://192.168.99.100/pizza/9_flauw> ;
+	<http://192.168.99.100/pizza/hasTopping> <http://192.168.99.100/pizza/9-Tomaat> , <http://192.168.99.100/pizza/9-mozzarella> , <http://192.168.99.100/pizza/9-gorgonzola> ;
+	<http://192.168.99.100/pizza/hasBase> <http://192.168.99.100/pizza/9_base> .
+
+<http://192.168.99.100/pizza/9-Tomaat> a <http://192.168.99.100/pizza/TomatoTopping> .
+
+<http://192.168.99.100/pizza/9-mozzarella> a <http://192.168.99.100/pizza/MozzarellaTopping> .
+
+<http://192.168.99.100/pizza/9-gorgonzola> a <http://192.168.99.100/pizza/GorgonzolaTopping> .
+
+<http://192.168.99.100/pizza/9_flauw> a <http://192.168.99.100/pizza/Mild> .
+
+<http://192.168.99.100/pizza/9_base> a <http://192.168.99.100/pizza/ThinAndCrispyBase> .
+
+<http://192.168.99.100/pizza/10-Siciliana> a <http://192.168.99.100/pizza/Pizza> ;
+	<http://192.168.99.100/pizza/hasCountryOfOrigin> <http://192.168.99.100/pizza/Italy> ;
+	<http://192.168.99.100/pizza/hasSpiciness> <http://192.168.99.100/pizza/10_flauw> ;
+	<http://192.168.99.100/pizza/hasTopping> <http://192.168.99.100/pizza/10-Tomaat> , <http://192.168.99.100/pizza/10-mozzarella> , <http://192.168.99.100/pizza/10-gehakt> , <http://192.168.99.100/pizza/10-paprika> , <http://192.168.99.100/pizza/10-uien> ;
+	<http://192.168.99.100/pizza/hasBase> <http://192.168.99.100/pizza/10_base> .
+
+<http://192.168.99.100/pizza/10-Tomaat> a <http://192.168.99.100/pizza/TomatoTopping> .
+
+<http://192.168.99.100/pizza/10-mozzarella> a <http://192.168.99.100/pizza/MozzarellaTopping> .
+
+<http://192.168.99.100/pizza/10-gehakt> a <http://192.168.99.100/pizza/MeatTopping> .
+
+<http://192.168.99.100/pizza/10-paprika> a <http://192.168.99.100/pizza/SweetPepperTopping> .
+
+<http://192.168.99.100/pizza/10-uien> a <http://192.168.99.100/pizza/OnionTopping> .
+
+<http://192.168.99.100/pizza/10_flauw> a <http://192.168.99.100/pizza/Mild> .
+
+<http://192.168.99.100/pizza/10_base> a <http://192.168.99.100/pizza/ThinAndCrispyBase> .
+
+<http://192.168.99.100/pizza/11-Taormina> a <http://192.168.99.100/pizza/Pizza> ;
+	<http://192.168.99.100/pizza/hasCountryOfOrigin> <http://192.168.99.100/pizza/Italy> ;
+	<http://192.168.99.100/pizza/hasSpiciness> <http://192.168.99.100/pizza/11_normaal> ;
+	<http://192.168.99.100/pizza/hasTopping> <http://192.168.99.100/pizza/11-Tomaat> , <http://192.168.99.100/pizza/11-mozzarella> , <http://192.168.99.100/pizza/11-champignons> , <http://192.168.99.100/pizza/11-salami> , <http://192.168.99.100/pizza/11-ham> ;
+	<http://192.168.99.100/pizza/hasBase> <http://192.168.99.100/pizza/11_base> .
+
+<http://192.168.99.100/pizza/11-Tomaat> a <http://192.168.99.100/pizza/TomatoTopping> .
+
+<http://192.168.99.100/pizza/11-mozzarella> a <http://192.168.99.100/pizza/MozzarellaTopping> .
+
+<http://192.168.99.100/pizza/11-champignons> a <http://192.168.99.100/pizza/MushroomTopping> .
+
+<http://192.168.99.100/pizza/11-salami> a <http://192.168.99.100/pizza/PeperoniSausageTopping> .
+
+<http://192.168.99.100/pizza/11-ham> a <http://192.168.99.100/pizza/HamTopping> .
+
+<http://192.168.99.100/pizza/11_normaal> a <http://192.168.99.100/pizza/Medium> .
+
+<http://192.168.99.100/pizza/11_base> a <http://192.168.99.100/pizza/ThinAndCrispyBase> .
+
+<http://192.168.99.100/pizza/12-Tricolore> a <http://192.168.99.100/pizza/Pizza> ;
+	<http://192.168.99.100/pizza/hasCountryOfOrigin> <http://192.168.99.100/pizza/Italy> ;
+	<http://192.168.99.100/pizza/hasSpiciness> <http://192.168.99.100/pizza/12_normaal> ;
+	<http://192.168.99.100/pizza/hasTopping> <http://192.168.99.100/pizza/12-Tomaat> , <http://192.168.99.100/pizza/12-mozzarella> , <http://192.168.99.100/pizza/12-spinazie> , <http://192.168.99.100/pizza/12-paprika> , <http://192.168.99.100/pizza/12-champignons> ;
+	<http://192.168.99.100/pizza/hasBase> <http://192.168.99.100/pizza/12_base> .
+
+<http://192.168.99.100/pizza/12-Tomaat> a <http://192.168.99.100/pizza/TomatoTopping> .
+
+<http://192.168.99.100/pizza/12-mozzarella> a <http://192.168.99.100/pizza/MozzarellaTopping> .
+
+<http://192.168.99.100/pizza/12-spinazie> a <http://192.168.99.100/pizza/SpinachTopping> .
+
+<http://192.168.99.100/pizza/12-paprika> a <http://192.168.99.100/pizza/SweetPepperTopping> .
+
+<http://192.168.99.100/pizza/12-champignons> a <http://192.168.99.100/pizza/MushroomTopping> .
+
+<http://192.168.99.100/pizza/12_normaal> a <http://192.168.99.100/pizza/Medium> .
+
+<http://192.168.99.100/pizza/12_base> a <http://192.168.99.100/pizza/ThinAndCrispyBase> .
+
+<http://192.168.99.100/pizza/13-4_Formaggi> a <http://192.168.99.100/pizza/Pizza> ;
+	<http://192.168.99.100/pizza/hasCountryOfOrigin> <http://192.168.99.100/pizza/Italy> ;
+	<http://192.168.99.100/pizza/hasSpiciness> <http://192.168.99.100/pizza/13_normaal> ;
+	<http://192.168.99.100/pizza/hasTopping> <http://192.168.99.100/pizza/13-Tomaat> , <http://192.168.99.100/pizza/13-4_soorten_kaas> ;
+	<http://192.168.99.100/pizza/hasBase> <http://192.168.99.100/pizza/13_base> .
+
+<http://192.168.99.100/pizza/13-Tomaat> a <http://192.168.99.100/pizza/TomatoTopping> .
+
+<http://192.168.99.100/pizza/13-4_soorten_kaas> a <http://192.168.99.100/pizza/FourCheesesTopping> .
+
+<http://192.168.99.100/pizza/13_normaal> a <http://192.168.99.100/pizza/Medium> .
+
+<http://192.168.99.100/pizza/13_base> a <http://192.168.99.100/pizza/ThinAndCrispyBase> .
+
+<http://192.168.99.100/pizza/14-Bari> a <http://192.168.99.100/pizza/Pizza> ;
+	<http://192.168.99.100/pizza/hasCountryOfOrigin> <http://192.168.99.100/pizza/Italy> ;
+	<http://192.168.99.100/pizza/hasSpiciness> <http://192.168.99.100/pizza/14_flauw> ;
+	<http://192.168.99.100/pizza/hasTopping> <http://192.168.99.100/pizza/14-Tomaat> , <http://192.168.99.100/pizza/14-mozzarella> , <http://192.168.99.100/pizza/14-ansjovis> , <http://192.168.99.100/pizza/14-kappertjes> , <http://192.168.99.100/pizza/14-asperges> , <http://192.168.99.100/pizza/14-olijven> ;
+	<http://192.168.99.100/pizza/hasBase> <http://192.168.99.100/pizza/14_base> .
+
+<http://192.168.99.100/pizza/14-Tomaat> a <http://192.168.99.100/pizza/TomatoTopping> .
+
+<http://192.168.99.100/pizza/14-mozzarella> a <http://192.168.99.100/pizza/MozzarellaTopping> .
+
+<http://192.168.99.100/pizza/14-ansjovis> a <http://192.168.99.100/pizza/AnchoviesTopping> .
+
+<http://192.168.99.100/pizza/14-kappertjes> a <http://192.168.99.100/pizza/CaperTopping> .
+
+<http://192.168.99.100/pizza/14-asperges> a <http://192.168.99.100/pizza/AsparagusTopping> .
+
+<http://192.168.99.100/pizza/14-olijven> a <http://192.168.99.100/pizza/OliveTopping> .
+
+<http://192.168.99.100/pizza/14_flauw> a <http://192.168.99.100/pizza/Mild> .
+
+<http://192.168.99.100/pizza/14_base> a <http://192.168.99.100/pizza/ThinAndCrispyBase> .
+
+<http://192.168.99.100/pizza/15-4_stagioni> a <http://192.168.99.100/pizza/Pizza> ;
+	<http://192.168.99.100/pizza/hasCountryOfOrigin> <http://192.168.99.100/pizza/Italy> ;
+	<http://192.168.99.100/pizza/hasSpiciness> <http://192.168.99.100/pizza/15_normaal> ;
+	<http://192.168.99.100/pizza/hasTopping> <http://192.168.99.100/pizza/15-Tomaat> , <http://192.168.99.100/pizza/15-mozzarella> , <http://192.168.99.100/pizza/15-paprika> , <http://192.168.99.100/pizza/15-artisjokken> , <http://192.168.99.100/pizza/15-champiginons> , <http://192.168.99.100/pizza/15-olijven> ;
+	<http://192.168.99.100/pizza/hasBase> <http://192.168.99.100/pizza/15_base> .
+
+<http://192.168.99.100/pizza/15-Tomaat> a <http://192.168.99.100/pizza/TomatoTopping> .
+
+<http://192.168.99.100/pizza/15-mozzarella> a <http://192.168.99.100/pizza/MozzarellaTopping> .
+
+<http://192.168.99.100/pizza/15-paprika> a <http://192.168.99.100/pizza/SweetPepperTopping> .
+
+<http://192.168.99.100/pizza/15-artisjokken> a <http://192.168.99.100/pizza/ArtichokeTopping> .
+
+<http://192.168.99.100/pizza/15-champiginons> a <http://192.168.99.100/pizza/MushroomTopping> .
+
+<http://192.168.99.100/pizza/15-olijven> a <http://192.168.99.100/pizza/OliveTopping> .
+
+<http://192.168.99.100/pizza/15_normaal> a <http://192.168.99.100/pizza/Medium> .
+
+<http://192.168.99.100/pizza/15_base> a <http://192.168.99.100/pizza/ThinAndCrispyBase> .
+
+<http://192.168.99.100/pizza/16-Tonno_e_cipolle> a <http://192.168.99.100/pizza/Pizza> ;
+	<http://192.168.99.100/pizza/hasCountryOfOrigin> <http://192.168.99.100/pizza/Italy> ;
+	<http://192.168.99.100/pizza/hasSpiciness> <http://192.168.99.100/pizza/16_normaal> ;
+	<http://192.168.99.100/pizza/hasTopping> <http://192.168.99.100/pizza/16-Tomaat> , <http://192.168.99.100/pizza/16-mozzarella> , <http://192.168.99.100/pizza/16-tonijn> , <http://192.168.99.100/pizza/16-uien> ;
+	<http://192.168.99.100/pizza/hasBase> <http://192.168.99.100/pizza/16_base> .
+
+<http://192.168.99.100/pizza/16-Tomaat> a <http://192.168.99.100/pizza/TomatoTopping> .
+
+<http://192.168.99.100/pizza/16-mozzarella> a <http://192.168.99.100/pizza/MozzarellaTopping> .
+
+<http://192.168.99.100/pizza/16-tonijn> a <http://192.168.99.100/pizza/FishTopping> .
+
+<http://192.168.99.100/pizza/16-uien> a <http://192.168.99.100/pizza/OnionTopping> .
+
+<http://192.168.99.100/pizza/16_normaal> a <http://192.168.99.100/pizza/Medium> .
+
+<http://192.168.99.100/pizza/16_base> a <http://192.168.99.100/pizza/ThinAndCrispyBase> .
+
+<http://192.168.99.100/pizza/17-Cocode> a <http://192.168.99.100/pizza/Pizza> ;
+	<http://192.168.99.100/pizza/hasCountryOfOrigin> <http://192.168.99.100/pizza/Italy> ;
+	<http://192.168.99.100/pizza/hasSpiciness> <http://192.168.99.100/pizza/17_flauw> ;
+	<http://192.168.99.100/pizza/hasTopping> <http://192.168.99.100/pizza/17-Tomaat> , <http://192.168.99.100/pizza/17-mozzarella> , <http://192.168.99.100/pizza/17-kipfilet> , <http://192.168.99.100/pizza/17-paprika> ;
+	<http://192.168.99.100/pizza/hasBase> <http://192.168.99.100/pizza/17_base> .
+
+<http://192.168.99.100/pizza/17-Tomaat> a <http://192.168.99.100/pizza/TomatoTopping> .
+
+<http://192.168.99.100/pizza/17-mozzarella> a <http://192.168.99.100/pizza/MozzarellaTopping> .
+
+<http://192.168.99.100/pizza/17-kipfilet> a <http://192.168.99.100/pizza/ChickenTopping> .
+
+<http://192.168.99.100/pizza/17-paprika> a <http://192.168.99.100/pizza/SweetPepperTopping> .
+
+<http://192.168.99.100/pizza/17_flauw> a <http://192.168.99.100/pizza/Mild> .
+
+<http://192.168.99.100/pizza/17_base> a <http://192.168.99.100/pizza/ThinAndCrispyBase> .
+
+<http://192.168.99.100/pizza/18-Dello_chef> a <http://192.168.99.100/pizza/Pizza> ;
+	<http://192.168.99.100/pizza/hasCountryOfOrigin> <http://192.168.99.100/pizza/Italy> ;
+	<http://192.168.99.100/pizza/hasSpiciness> <http://192.168.99.100/pizza/18_pikant> ;
+	<http://192.168.99.100/pizza/hasTopping> <http://192.168.99.100/pizza/18-Tomaat> , <http://192.168.99.100/pizza/18-mozzarella> , <http://192.168.99.100/pizza/18-rundergehakt> ;
+	<http://192.168.99.100/pizza/hasBase> <http://192.168.99.100/pizza/18_base> .
+
+<http://192.168.99.100/pizza/18-Tomaat> a <http://192.168.99.100/pizza/TomatoTopping> .
+
+<http://192.168.99.100/pizza/18-mozzarella> a <http://192.168.99.100/pizza/MozzarellaTopping> .
+
+<http://192.168.99.100/pizza/18-rundergehakt> a <http://192.168.99.100/pizza/HotSpicedBeefTopping> .
+
+<http://192.168.99.100/pizza/18_pikant> a <http://192.168.99.100/pizza/Hot> .
+
+<http://192.168.99.100/pizza/18_base> a <http://192.168.99.100/pizza/ThinAndCrispyBase> .
+
+<http://192.168.99.100/pizza/19-Pescatore> a <http://192.168.99.100/pizza/Pizza> ;
+	<http://192.168.99.100/pizza/hasCountryOfOrigin> <http://192.168.99.100/pizza/Italy> ;
+	<http://192.168.99.100/pizza/hasSpiciness> <http://192.168.99.100/pizza/19_normaal> ;
+	<http://192.168.99.100/pizza/hasTopping> <http://192.168.99.100/pizza/19-Tomaat> , <http://192.168.99.100/pizza/19-verschillende_soorten_zeefruit> ;
+	<http://192.168.99.100/pizza/hasBase> <http://192.168.99.100/pizza/19_base> .
+
+<http://192.168.99.100/pizza/19-Tomaat> a <http://192.168.99.100/pizza/TomatoTopping> .
+
+<http://192.168.99.100/pizza/19-verschillende_soorten_zeefruit> a <http://192.168.99.100/pizza/FishTopping> .
+
+<http://192.168.99.100/pizza/19_normaal> a <http://192.168.99.100/pizza/Medium> .
+
+<http://192.168.99.100/pizza/19_base> a <http://192.168.99.100/pizza/ThinAndCrispyBase> .
+
+<http://192.168.99.100/pizza/20-Scintille> a <http://192.168.99.100/pizza/Pizza> ;
+	<http://192.168.99.100/pizza/hasCountryOfOrigin> <http://192.168.99.100/pizza/Italy> ;
+	<http://192.168.99.100/pizza/hasSpiciness> <http://192.168.99.100/pizza/20_pikant> ;
+	<http://192.168.99.100/pizza/hasTopping> <http://192.168.99.100/pizza/20-Tomaat> , <http://192.168.99.100/pizza/20-mozzarella> , <http://192.168.99.100/pizza/20-chorizo> , <http://192.168.99.100/pizza/20-olijven> ;
+	<http://192.168.99.100/pizza/hasBase> <http://192.168.99.100/pizza/20_base> .
+
+<http://192.168.99.100/pizza/20-Tomaat> a <http://192.168.99.100/pizza/TomatoTopping> .
+
+<http://192.168.99.100/pizza/20-mozzarella> a <http://192.168.99.100/pizza/MozzarellaTopping> .
+
+<http://192.168.99.100/pizza/20-chorizo> a <http://192.168.99.100/pizza/PeperoniSausageTopping> .
+
+<http://192.168.99.100/pizza/20-olijven> a <http://192.168.99.100/pizza/OliveTopping> .
+
+<http://192.168.99.100/pizza/20_pikant> a <http://192.168.99.100/pizza/Hot> .
+
+<http://192.168.99.100/pizza/20_base> a <http://192.168.99.100/pizza/ThinAndCrispyBase> .
+
+<http://192.168.99.100/pizza/21-Salmone> a <http://192.168.99.100/pizza/Pizza> ;
+	<http://192.168.99.100/pizza/hasCountryOfOrigin> <http://192.168.99.100/pizza/Italy> ;
+	<http://192.168.99.100/pizza/hasSpiciness> <http://192.168.99.100/pizza/21_normaal> ;
+	<http://192.168.99.100/pizza/hasTopping> <http://192.168.99.100/pizza/21-Tomaat> , <http://192.168.99.100/pizza/21-mozzarella> , <http://192.168.99.100/pizza/21-zalm> , <http://192.168.99.100/pizza/21-rucola> ;
+	<http://192.168.99.100/pizza/hasBase> <http://192.168.99.100/pizza/21_base> .
+
+<http://192.168.99.100/pizza/21-Tomaat> a <http://192.168.99.100/pizza/TomatoTopping> .
+
+<http://192.168.99.100/pizza/21-mozzarella> a <http://192.168.99.100/pizza/MozzarellaTopping> .
+
+<http://192.168.99.100/pizza/21-zalm> a <http://192.168.99.100/pizza/FishTopping> .
+
+<http://192.168.99.100/pizza/21-rucola> a <http://192.168.99.100/pizza/VegetableTopping> .
+
+<http://192.168.99.100/pizza/21_normaal> a <http://192.168.99.100/pizza/Medium> .
+
+<http://192.168.99.100/pizza/21_base> a <http://192.168.99.100/pizza/ThinAndCrispyBase> .
+
+<http://192.168.99.100/pizza/22-Rucola_spec> a <http://192.168.99.100/pizza/Pizza> ;
+	<http://192.168.99.100/pizza/hasCountryOfOrigin> <http://192.168.99.100/pizza/Italy> ;
+	<http://192.168.99.100/pizza/hasSpiciness> <http://192.168.99.100/pizza/22_normaal> ;
+	<http://192.168.99.100/pizza/hasTopping> <http://192.168.99.100/pizza/22-Tomaat> , <http://192.168.99.100/pizza/22-Mozzarella> , <http://192.168.99.100/pizza/22-verse_pesto> , <http://192.168.99.100/pizza/22-rucola> , <http://192.168.99.100/pizza/22-parmigiano> ;
+	<http://192.168.99.100/pizza/hasBase> <http://192.168.99.100/pizza/22_base> .
+
+<http://192.168.99.100/pizza/22-Tomaat> a <http://192.168.99.100/pizza/TomatoTopping> .
+
+<http://192.168.99.100/pizza/22-Mozzarella> a <http://192.168.99.100/pizza/MozzarellaTopping> .
+
+<http://192.168.99.100/pizza/22-verse_pesto> a <http://192.168.99.100/pizza/SauceTopping> .
+
+<http://192.168.99.100/pizza/22-rucola> a <http://192.168.99.100/pizza/VegetableTopping> .
+
+<http://192.168.99.100/pizza/22-parmigiano> a <http://192.168.99.100/pizza/ParmesanTopping> .
+
+<http://192.168.99.100/pizza/22_normaal> a <http://192.168.99.100/pizza/Medium> .
+
+<http://192.168.99.100/pizza/22_base> a <http://192.168.99.100/pizza/ThinAndCrispyBase> .
+
+<http://192.168.99.100/pizza/23-Parma> a <http://192.168.99.100/pizza/Pizza> ;
+	<http://192.168.99.100/pizza/hasCountryOfOrigin> <http://192.168.99.100/pizza/Italy> ;
+	<http://192.168.99.100/pizza/hasSpiciness> <http://192.168.99.100/pizza/23_flauw> ;
+	<http://192.168.99.100/pizza/hasTopping> <http://192.168.99.100/pizza/23-Tomaat> , <http://192.168.99.100/pizza/23-mozzarella> , <http://192.168.99.100/pizza/23-parmaham> ;
+	<http://192.168.99.100/pizza/hasBase> <http://192.168.99.100/pizza/23_base> .
+
+<http://192.168.99.100/pizza/23-Tomaat> a <http://192.168.99.100/pizza/TomatoTopping> .
+
+<http://192.168.99.100/pizza/23-mozzarella> a <http://192.168.99.100/pizza/MozzarellaTopping> .
+
+<http://192.168.99.100/pizza/23-parmaham> a <http://192.168.99.100/pizza/ParmaHamTopping> .
+
+<http://192.168.99.100/pizza/23_flauw> a <http://192.168.99.100/pizza/Mild> .
+
+<http://192.168.99.100/pizza/23_base> a <http://192.168.99.100/pizza/ThinAndCrispyBase> .

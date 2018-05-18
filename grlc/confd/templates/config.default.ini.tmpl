@@ -1,0 +1,12 @@
+[auth]
+github_access_token = xxx
+
+[local]
+local_sparql_dir = ./
+
+[defaults]
+# Default endpoint, if none specified elsewhere
+sparql_endpoint = http://fuseki:{{ getv "/fuseki/port" }}/pizza/query
+server_name = {{ getenv "GRLC_URL" }}
+user = none
+password = none

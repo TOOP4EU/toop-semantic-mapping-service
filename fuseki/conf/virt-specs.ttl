@@ -1,0 +1,38 @@
+@prefix : <http://www.example.org/tno#> .
+@prefix fuseki: <http://jena.apache.org/fuseki#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix tdb: <http://jena.hpl.hp.com/2008/tdb#> .
+@prefix ja: <http://jena.hpl.hp.com/2005/11/Assembler#> .
+@prefix rr: <http://jena.hpl.hp.com/2003/RuleReasoner#> .
+
+
+<#service1> rdf:type fuseki:Service ;
+    fuseki:name                       "ds" ;       # http://host:port/ds
+    fuseki:serviceQuery               "sparql" ;   # SPARQL query service
+    fuseki:serviceQuery               "query" ;    # SPARQL query service (alt name)
+    fuseki:serviceUpdate              "update" ;   # SPARQL update service
+    fuseki:serviceUpload              "upload" ;   # Non-SPARQL upload service
+    fuseki:serviceReadWriteGraphStore "data" ;     # SPARQL Graph store protocol (read and write)
+    # A separate read-only graph store endpoint:
+    fuseki:serviceReadGraphStore      "get" ;      # SPARQL Graph store protocol (read only)
+    fuseki:dataset                   :dataset ;
+    .
+
+tdb:DatasetTDB rdfs:subClassOf ja:RDFDataset .
+tdb:GraphTDB rdfs:subClassOf ja:Model .
+
+[] ja:loadClass "nl.tno.ict.ds.cb.PizzaPriceBuiltin" ;
+ ja:loadClass "nl.tno.ict.ds.cb.PizzaPopularBuiltin" ;
+ ja:loadClass "nl.tno.ds.cb.ChmExport" .
+
+:dataset rdf:type ja:RDFDataset ;
+	ja:defaultGraph <#infGraph> .
+
+<#infGraph>  rdf:type ja:InfModel ;
+             ja:reasoner [ 
+             	ja:rulesFrom <file:virt/et.rules> ;
+			 ] ;
+             ja:content <#test-inf> .
+
+<#test-inf> ja:externalContent <virt/data.ttl> .
