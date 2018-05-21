@@ -12,23 +12,20 @@ Execute the following steps:
 - Make sure you have Docker, Docker Compose and Git installed.
 - Git clone this Semantic Mapping Serivce repository to your computer.
 - Open a shell and navigate to your `git clone` of the SMS.
-- Make a .env file in the root directory of this local SMS repository and add a Github API access token to it
-	this looks like: env_github_access_token= followed by a hexadecimal Github API token that has to be generated at Github.
+- Copy the .env.default file to a .env file in the root directory of this local repository
+- Add a Github API access token to it as indicated in the last lines of the .env.default file,
+  which looks like: env_github_access_token= <hexadecimal Github API token that has to be generated at Github>
+  (If you don't have a Github API access token, you can also contact jack.verhoosel@tno.nl to get one)
 
 - Execute the following command: `docker-compose build fuseki grlc' and then 'docker-compose up -d fuseki grlc`
-- All SMS services will be started automatically, this might take a while (also when the command is already finished, it might still take a while for all the services to be started).
+- The SMS services Fuseki and GRLC will be started automatically, this might take a while (also when the command is already finished, it might still take a while for all the services to be started).
 - Now you can access different services of SMS. In the browser open:
 
 	- Apache Jena Fuseki: `http://localhost:3030`.
-	- GRLC: `http://localhost:8001`.
+	- GRLC: `http://localhost:9001`.
 	
-Note that we assume your docker host is available on `localhost` (which is the case if you are using Docker for Linux or recent Docker for Windows)
+Note that we assume your docker host is available on `localhost` (which is the case if you are using Docker for Linux or recent Docker for Windows and Mac)
+If you want to use a different port number for the GRLC service, you can edit it in the .env file by changing GRLC_PORT=9001 to GRLC_PORT=<your-port>
 
-### Configure SMS for your own domain
-This sections gives some pointer to what needs to be done to configure SMS for your own domain. Although we strive to make SMS plug-and-play (as in, clone into a particular location and everything sets up automatically), this is currently not the case.
-
-References to the domain of SMS can be found in these locations (please update if we forgot some):
-
-- ./fuseki/ontology-plus-data.ttl
-- ./fuseki/configure.sh
-
+For any other questions, please contact jack.verhoosel@tno.nl
+ 
