@@ -15,7 +15,7 @@ Execute the following steps:
 - Copy the .env.default file to a .env file in the root directory of this local repository
 - Add a Github API access token to it as indicated in the last lines of the .env.default file,
   which looks like: env_github_access_token= "hexadecimal Github API token that has to be generated at Github"
-  (If you don't have a Github API access token, you can also contact jack.verhoosel@tno.nl to get one)
+- If you don't have a Github API access token, you can also contact jack.verhoosel@tno.nl to get one
 
 - Execute the following command: `docker-compose build fuseki grlc' and then 'docker-compose up -d fuseki grlc`
 - The SMS services Fuseki and GRLC will be started automatically, this might take a while (also when the command is already finished, it might still take a while for all the services to be started).
