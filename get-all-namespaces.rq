@@ -1,0 +1,15 @@
+#+ endpoint: http://fuseki:3030/TOOP/query
+#+ method: GET
+#+ summary: select all namespaces
+
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT DISTINCT ?ns
+WHERE {
+  ?s ?p ?o .
+  FILTER (STRSTARTS(str(?o),"http://toop.") || STRSTARTS(str(?o),"http://example.")).
+BIND (STRBEFORE(str(?o),"#") AS ?ns)
+}
