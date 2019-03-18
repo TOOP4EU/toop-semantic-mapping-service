@@ -1,0 +1,16 @@
+#+ endpoint: http://fuseki:3030/TOOP/query
+#+ method: GET
+#+ summary: select the pairs of concepts in source and target namespaces that have a subClassOf or subPropertyOf relation
+
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+SELECT DISTINCT ?source ?target
+WHERE {
+    ?s ?p ?o .
+    FILTER ((?p = rdfs:subClassOf) || (?p = rdfs:subPropertyOf)) .
+    FILTER ((STRSTARTS(str(?s), ?_sourcenamespace) && STRSTARTS(str(?o), ?_targetnamespace)) || (STRSTARTS(str(?s), ?_targetnamespace) && STRSTARTS(str(?o), ?_sourcenamespace))) .
+    BIND (IF(STRSTARTS(str(?s), ?_sourcenamespace),?s,?o) AS ?source)
+    BIND (IF(STRSTARTS(str(?s), ?_targetnamespace),?s,?o) AS ?target)
+}
+ORDER BY ?source
