@@ -1,7 +1,7 @@
 version: '2'
 services:
   fuseki:
-    image: ci.tno.nl/toop/plasido/fuseki:latest
+    image: toop_sms_fuseki
     build:
       context: ./fuseki/
 
@@ -25,7 +25,7 @@ services:
       ADMIN_PASSWORD: admin
       JVM_ARGS: -Xmx3500M  
   grlc:
-    image: ci.tno.nl/toop/plasido/grlc:latest
+    image: toop_sms_grlc
     build:
       context: ./grlc/
       args:
