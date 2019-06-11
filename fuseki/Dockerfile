@@ -15,11 +15,6 @@ RUN chmod +x /opt/startup.sh
 
 ARG INFERENCE_ENABLED
 
-#the VirtualRDFGraph Assembler configuration
-ADD conf/virt-specs.ttl $FUSEKI_BASE/configuration/
-ADD fact/rule-data.ttl $FUSEKI_BASE/configuration/virt/data.ttl
-ADD fact/et.rules $FUSEKI_BASE/configuration/virt/et.rules
-
 #include a modified fuseki-server.jar where we increased the log level.
 ARG TRACE_ENABLED
 ADD bin/fuseki-server$TRACE_ENABLED.jar /jena-fuseki/fuseki-server.jar
@@ -31,7 +26,7 @@ RUN chmod +x /jena-fuseki/fuseki-server
 RUN mkdir /opt/lib/
 ADD lib/* /opt/lib/
 
-ADD toop-ro-total.ttl /opt/registered-organization.ttl
+#ADD toop-ro-total.ttl /opt/registered-organization.ttl
 
 
 
