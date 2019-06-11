@@ -23,18 +23,7 @@ services:
       http_proxy: ${env_http_proxy}
       https_proxy: ${env_https_proxy}
       ADMIN_PASSWORD: admin
-      JVM_ARGS: -Xmx3500M
-  refine:
-    image: ci.tno.nl/toop/plasido/refine:latest
-    build: ./refine/
-    ports:
-      - "${REFINE_PORT}:3333"
-    environment:
-      no_proxy: ${env_no_proxy}
-      http_proxy: ${env_http_proxy}
-      https_proxy: ${env_https_proxy}
-      REFINE_MEMORY: "2G"
-      REFINE_VERBOSITY: "trace"
+      JVM_ARGS: -Xmx3500M  
   grlc:
     image: ci.tno.nl/toop/plasido/grlc:latest
     build:
